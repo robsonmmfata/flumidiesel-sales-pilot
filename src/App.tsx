@@ -14,6 +14,11 @@ import AdminUsersPage from "./pages/admin/Users";
 import ManagerDashboard from "./pages/manager/Dashboard";
 import SalespersonDashboard from "./pages/salesperson/Dashboard";
 import SalespersonVisitsPage from "./pages/salesperson/Visits";
+import SalespersonSchedulePage from "./pages/salesperson/Schedule";
+import SalespersonProspectsPage from "./pages/salesperson/Prospects";
+import SalespersonSalesPage from "./pages/salesperson/Sales";
+import SalespersonInventoryPage from "./pages/salesperson/Inventory";
+import SalespersonPromotionsPage from "./pages/salesperson/Promotions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,7 +52,11 @@ const App = () => (
             <Route element={<ProtectedRoute allowedRoles={['salesperson']} />}>
               <Route path="/salesperson/dashboard" element={<SalespersonDashboard />} />
               <Route path="/salesperson/visits" element={<SalespersonVisitsPage />} />
-              {/* Add more salesperson routes as needed */}
+              <Route path="/salesperson/schedule" element={<SalespersonSchedulePage />} />
+              <Route path="/salesperson/prospects" element={<SalespersonProspectsPage />} />
+              <Route path="/salesperson/sales" element={<SalespersonSalesPage />} />
+              <Route path="/salesperson/inventory" element={<SalespersonInventoryPage />} />
+              <Route path="/salesperson/promotions" element={<SalespersonPromotionsPage />} />
             </Route>
             
             {/* Catch-all route for 404 */}

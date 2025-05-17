@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
   LogOut, 
@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Spinner } from '@/components/ui/Spinner';
+import { toast } from 'sonner';
 
 interface SidebarLinkProps {
   to: string;
@@ -49,7 +50,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout, isLoading, isAdmin, isManager } = useAuth();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
-  const pathname = window.location.pathname;
+  const location = useLocation();
+  const pathname = location.pathname;
 
   if (isLoading || !user) {
     return (
@@ -58,6 +60,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       </div>
     );
   }
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Sessão encerrada com sucesso");
+  };
 
   const baseRoute = isAdmin ? '/admin' : isManager ? '/manager' : '/salesperson';
 
@@ -171,7 +178,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             <Button 
               variant="outline" 
               size={isSidebarCollapsed ? 'icon' : 'default'} 
-              onClick={() => logout()}
+              onClick={handleLogout}
               className="w-full"
             >
               <LogOut size={18} />
