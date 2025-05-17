@@ -40,10 +40,19 @@ const initialFormData: VisitFormData = {
   productsPresented: '',
 };
 
-interface Visit extends Omit<VisitFormData, 'productsPresented'> {
+interface Visit {
   id: string;
   date: string;
   salesPersonId: string;
+  clientName: string;
+  address: string;
+  city: string;
+  contactName: string;
+  contactPhone: string;
+  arrivalTime: string;
+  departureTime: string;
+  subject: string;
+  interestLevel: string;
   productsPresented: string[];
   location: {
     latitude: number;
@@ -53,7 +62,7 @@ interface Visit extends Omit<VisitFormData, 'productsPresented'> {
 
 const SalespersonVisitsPage = () => {
   const { user } = useAuth();
-  const [visits, setVisits] = useState<Visit[]>(mockVisits);
+  const [visits, setVisits] = useState<Visit[]>(() => mockVisits);
   const [formData, setFormData] = useState<VisitFormData>(initialFormData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

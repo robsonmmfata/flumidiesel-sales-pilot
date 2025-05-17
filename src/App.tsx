@@ -11,7 +11,21 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUsersPage from "./pages/admin/Users";
+import AdminVisitsPage from "./pages/admin/Visits";
+import AdminSchedulePage from "./pages/admin/Schedule";
+import AdminProspectsPage from "./pages/admin/Prospects";
+import AdminSalesPage from "./pages/admin/Sales";
+import AdminInventoryPage from "./pages/admin/Inventory";
+import AdminPromotionsPage from "./pages/admin/Promotions";
+
 import ManagerDashboard from "./pages/manager/Dashboard";
+import ManagerVisitsPage from "./pages/manager/Visits";
+import ManagerSchedulePage from "./pages/manager/Schedule";
+import ManagerProspectsPage from "./pages/manager/Prospects";
+import ManagerSalesPage from "./pages/manager/Sales";
+import ManagerInventoryPage from "./pages/manager/Inventory";
+import ManagerPromotionsPage from "./pages/manager/Promotions";
+
 import SalespersonDashboard from "./pages/salesperson/Dashboard";
 import SalespersonVisitsPage from "./pages/salesperson/Visits";
 import SalespersonSchedulePage from "./pages/salesperson/Schedule";
@@ -19,6 +33,7 @@ import SalespersonProspectsPage from "./pages/salesperson/Prospects";
 import SalespersonSalesPage from "./pages/salesperson/Sales";
 import SalespersonInventoryPage from "./pages/salesperson/Inventory";
 import SalespersonPromotionsPage from "./pages/salesperson/Promotions";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,13 +54,23 @@ const App = () => (
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<AdminUsersPage />} />
-              {/* Add more admin routes as needed */}
+              <Route path="/admin/visits" element={<AdminVisitsPage />} />
+              <Route path="/admin/schedule" element={<AdminSchedulePage />} />
+              <Route path="/admin/prospects" element={<AdminProspectsPage />} />
+              <Route path="/admin/sales" element={<AdminSalesPage />} />
+              <Route path="/admin/inventory" element={<AdminInventoryPage />} />
+              <Route path="/admin/promotions" element={<AdminPromotionsPage />} />
             </Route>
             
             {/* Protected Manager Routes */}
             <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
               <Route path="/manager/dashboard" element={<ManagerDashboard />} />
-              {/* Add more manager routes as needed */}
+              <Route path="/manager/visits" element={<ManagerVisitsPage />} />
+              <Route path="/manager/schedule" element={<ManagerSchedulePage />} />
+              <Route path="/manager/prospects" element={<ManagerProspectsPage />} />
+              <Route path="/manager/sales" element={<ManagerSalesPage />} />
+              <Route path="/manager/inventory" element={<ManagerInventoryPage />} />
+              <Route path="/manager/promotions" element={<ManagerPromotionsPage />} />
             </Route>
             
             {/* Protected Salesperson Routes */}
