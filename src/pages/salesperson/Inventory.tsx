@@ -28,16 +28,16 @@ const SalespersonInventoryPage = () => {
   });
 
   // Function to determine stock level badge color
-  const getStockLevelBadge = (quantity: number) => {
-    if (quantity <= 5) {
+  const getStockLevelBadge = (stock: number) => {
+    if (stock <= 5) {
       return (
         <Badge variant="destructive" className="gap-1">
           <AlertCircle className="h-3 w-3" /> Baixo
         </Badge>
       );
-    } else if (quantity <= 20) {
+    } else if (stock <= 20) {
       return (
-        <Badge variant="warning" className="gap-1 bg-yellow-500 hover:bg-yellow-600">
+        <Badge variant="secondary" className="gap-1 bg-yellow-500 text-white hover:bg-yellow-600">
           <AlertCircle className="h-3 w-3" /> Médio
         </Badge>
       );
@@ -100,7 +100,7 @@ const SalespersonInventoryPage = () => {
                 <CardHeader className="p-4 pb-2 bg-gray-50">
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg">{item.name}</CardTitle>
-                    {getStockLevelBadge(item.quantity)}
+                    {getStockLevelBadge(item.stock)}
                   </div>
                   <p className="text-sm text-gray-500">SKU: {item.sku}</p>
                 </CardHeader>
@@ -117,7 +117,7 @@ const SalespersonInventoryPage = () => {
                   <div className="pt-2">
                     <div className="flex justify-between items-center text-sm">
                       <span>Quantidade disponível:</span>
-                      <span className="font-medium">{item.quantity} unidades</span>
+                      <span className="font-medium">{item.stock} unidades</span>
                     </div>
                   </div>
                 </CardContent>
