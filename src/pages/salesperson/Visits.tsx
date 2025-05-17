@@ -90,12 +90,15 @@ const SalespersonVisitsPage = () => {
       id: Date.now().toString(),
       date: currentDate,
       salesPersonId: user?.id || '',
-      productsPresented: formData.productsPresented.split(',').map(product => product.trim()),
+      // Fix: Convert the comma-separated string to an array of strings
+      productsPresented: formData.productsPresented ? formData.productsPresented.split(',').map(product => product.trim()) : [],
       location: {
         latitude: -23.5505, // Mock location for demo
         longitude: -46.6333,
       },
       ...formData,
+      // Explicitly override productsPresented from the spread to avoid type error
+      productsPresented: formData.productsPresented ? formData.productsPresented.split(',').map(product => product.trim()) : [],
     };
     
     setVisits(prev => [...prev, newVisit]);
