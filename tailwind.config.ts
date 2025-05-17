@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -24,6 +25,19 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				flumi: {
+					50: '#f0f7ff',
+					100: '#e0effe',
+					200: '#bae1fd',
+					300: '#7ccafb',
+					400: '#36aef8',
+					500: '#0c91e6',
+					600: '#0173c5',
+					700: '#015ca0',
+					800: '#054e85',
+					900: '#0a416e',
+					950: '#07294b',
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
