@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
@@ -13,17 +12,18 @@ import { mockVisits } from '@/data/mockData';
 import { PlusCircle, MapPin, Calendar, Clock, User, Building, Phone, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Visit } from '@/models/types';
 
 interface VisitFormData {
   clientName: string;
   address: string;
   city: string;
   contactName: string;
-  contactPhone: string;
+  contactInfo: string; // Changed from contactPhone to contactInfo to match models/types.ts
   arrivalTime: string;
   departureTime: string;
   subject: string;
-  interestLevel: string;
+  interestLevel: 'low' | 'medium' | 'high';
   productsPresented: string;
 }
 
@@ -32,7 +32,7 @@ const initialFormData: VisitFormData = {
   address: '',
   city: '',
   contactName: '',
-  contactPhone: '',
+  contactInfo: '', // Changed from contactPhone to contactInfo
   arrivalTime: '',
   departureTime: '',
   subject: '',
@@ -40,29 +40,9 @@ const initialFormData: VisitFormData = {
   productsPresented: '',
 };
 
-interface Visit {
-  id: string;
-  date: string;
-  salesPersonId: string;
-  clientName: string;
-  address: string;
-  city: string;
-  contactName: string;
-  contactPhone: string;
-  arrivalTime: string;
-  departureTime: string;
-  subject: string;
-  interestLevel: string;
-  productsPresented: string[];
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-}
-
 const SalespersonVisitsPage = () => {
   const { user } = useAuth();
-  const [visits, setVisits] = useState<Visit[]>(() => mockVisits);
+  const [visits, setVisits] = useState<Visit[]>(mockVisits); // Using the imported Visit type
   const [formData, setFormData] = useState<VisitFormData>(initialFormData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -89,8 +69,15 @@ const SalespersonVisitsPage = () => {
       id: Date.now().toString(),
       date: currentDate,
       salesPersonId: user?.id || '',
-      ...formData,
-      // Override with correctly processed array
+      clientName: formData.clientName,
+      address: formData.address,
+      city: formData.city,
+      contactName: formData.contactName,
+      contactInfo: formData.contactInfo, // Changed from contactPhone to contactInfo
+      arrivalTime: formData.arrivalTime,
+      departureTime: formData.departureTime,
+      subject: formData.subject,
+      interestLevel: formData.interestLevel as 'low' | 'medium' | 'high',
       productsPresented: productsArray,
       location: {
         latitude: -23.5505, // Mock location for demo
@@ -179,11 +166,11 @@ const SalespersonVisitsPage = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="contactPhone">Telefone do Contato</Label>
+                    <Label htmlFor="contactInfo">Telefone/Email do Contato</Label>
                     <Input
-                      id="contactPhone"
-                      name="contactPhone"
-                      value={formData.contactPhone}
+                      id="contactInfo"
+                      name="contactInfo"
+                      value={formData.contactInfo}
                       onChange={handleInputChange}
                       required
                     />
@@ -279,7 +266,7 @@ const SalespersonVisitsPage = () => {
                       <CardTitle className="text-lg">{visit.clientName}</CardTitle>
                       <div className="text-sm text-gray-500 flex items-center">
                         <Calendar className="w-4 h-4 mr-1" />
-                        {visit.date}
+                        {new Date(visit.date).toLocaleDateString()}
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-2">
@@ -298,7 +285,7 @@ const SalespersonVisitsPage = () => {
                       
                       <div className="flex items-center">
                         <Phone className="w-4 h-4 mr-2 text-gray-500" />
-                        <p className="text-sm">{visit.contactPhone}</p>
+                        <p className="text-sm">{visit.contactInfo}</p>
                       </div>
                       
                       <div className="flex">
