@@ -9,11 +9,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { mockSales, mockInventory } from '@/data/mockData';
-import { PlusCircle, TrendingUp, Calendar, User, Package, CreditCard, Trash } from 'lucide-react';
+import { PlusCircle, FileText, User, Building, Calendar, DollarSign, Package, Truck, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
 import { Sale } from '@/models/types';
 
-interface ProductItem {
+interface SaleProduct {
   productId: string;
   name: string;
   quantity: number;
@@ -22,7 +22,7 @@ interface ProductItem {
 
 interface SaleFormData {
   clientName: string;
-  products: ProductItem[];
+  products: SaleProduct[];
   paymentMethod: 'cash' | 'credit' | 'debit' | 'transfer' | 'invoice';
   deliveryDate: string;
   orderNumber: string;
@@ -30,7 +30,7 @@ interface SaleFormData {
 
 const initialFormData: SaleFormData = {
   clientName: '',
-  products: [],
+  products: [{ productId: '', name: '', quantity: 1, unitPrice: 0 }],
   paymentMethod: 'invoice',
   deliveryDate: '',
   orderNumber: '',
@@ -41,16 +41,8 @@ const SalespersonSalesPage = () => {
   const [sales, setSales] = useState<Sale[]>(mockSales);
   const [formData, setFormData] = useState<SaleFormData>(initialFormData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
-  // Current product being added
-  const [currentProduct, setCurrentProduct] = useState({
-    productId: '',
-    name: '',
-    quantity: 1,
-    unitPrice: 0
-  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -59,53 +51,54 @@ const SalespersonSalesPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleProductSelect = (productId: string) => {
-    const product = mockInventory.find(p => p.id === productId);
-    if (product) {
-      setCurrentProduct({
-        productId: product.id,
-        name: product.name,
-        quantity: 1,
-        unitPrice: product.price
-      });
-    }
+  const handleProductChange = (index: number, field: keyof SaleProduct, value: string | number) => {
+    setFormData((prev) => {
+      const newProducts = [...prev.products];
+      newProducts[index] = {
+        ...newProducts[index],
+        [field]: value,
+      };
+
+      // If changing the product, update name and price automatically
+      if (field === 'productId' && typeof value === 'string') {
+        const selectedProduct = mockInventory.find(product => product.id === value);
+        if (selectedProduct) {
+          newProducts[index].name = selectedProduct.name;
+          newProducts[index].unitPrice = selectedProduct.price;
+        }
+      }
+
+      return { ...prev, products: newProducts };
+    });
   };
 
-  const handleAddProduct = () => {
-    if (currentProduct.productId && currentProduct.quantity > 0) {
-      setFormData(prev => ({
-        ...prev,
-        products: [...prev.products, currentProduct]
-      }));
-      
-      // Reset current product
-      setCurrentProduct({
-        productId: '',
-        name: '',
-        quantity: 1,
-        unitPrice: 0
-      });
-    }
-  };
-
-  const handleRemoveProduct = (index: number) => {
-    setFormData(prev => ({
+  const addProductRow = () => {
+    setFormData((prev) => ({
       ...prev,
-      products: prev.products.filter((_, i) => i !== index)
+      products: [...prev.products, { productId: '', name: '', quantity: 1, unitPrice: 0 }],
     }));
   };
 
-  const calculateTotal = (): number => {
-    return formData.products.reduce((sum, product) => sum + (product.quantity * product.unitPrice), 0);
+  const removeProductRow = (index: number) => {
+    if (formData.products.length > 1) {
+      setFormData((prev) => ({
+        ...prev,
+        products: prev.products.filter((_, i) => i !== index),
+      }));
+    }
+  };
+
+  const calculateTotal = () => {
+    return formData.products.reduce((total, product) => {
+      return total + (product.quantity * product.unitPrice);
+    }, 0);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (formData.products.length === 0) {
-      toast.error('Adicione pelo menos um produto');
-      return;
-    }
+    // Generate a new order number if not provided
+    const orderNumber = formData.orderNumber || `ORD-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
     
     const newSale: Sale = {
       id: Date.now().toString(),
@@ -114,7 +107,7 @@ const SalespersonSalesPage = () => {
       totalValue: calculateTotal(),
       paymentMethod: formData.paymentMethod,
       deliveryDate: formData.deliveryDate,
-      orderNumber: formData.orderNumber || `PED-${Date.now().toString().slice(-6)}`,
+      orderNumber: orderNumber,
       salesPersonId: user?.id || '',
       createdAt: new Date().toISOString(),
     };
@@ -127,13 +120,20 @@ const SalespersonSalesPage = () => {
 
   // Filter sales for current user
   const userSales = sales.filter(sale => sale.salesPersonId === user?.id);
+  
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
+  };
 
-  const paymentMethodLabel = (method: string) => {
+  const getPaymentMethodLabel = (method: string) => {
     switch (method) {
       case 'cash': return 'Dinheiro';
       case 'credit': return 'Cartão de Crédito';
       case 'debit': return 'Cartão de Débito';
-      case 'transfer': return 'Transferência Bancária';
+      case 'transfer': return 'Transferência';
       case 'invoice': return 'Boleto';
       default: return method;
     }
@@ -151,14 +151,14 @@ const SalespersonSalesPage = () => {
                 Nova Venda
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Registrar Nova Venda</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 pt-4">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="clientName">Nome do Cliente</Label>
+                    <Label htmlFor="clientName">Nome do Cliente/Empresa</Label>
                     <Input
                       id="clientName"
                       name="clientName"
@@ -169,128 +169,71 @@ const SalespersonSalesPage = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label>Produtos</Label>
-                    <div className="border rounded-md p-4 space-y-4">
-                      <div className="grid grid-cols-12 gap-2">
-                        <div className="col-span-5">
-                          <Label htmlFor="product">Produto</Label>
+                    <div className="flex justify-between items-center">
+                      <Label>Produtos</Label>
+                      <Button type="button" variant="outline" size="sm" onClick={addProductRow}>
+                        <PlusCircle className="h-4 w-4 mr-1" /> Adicionar Produto
+                      </Button>
+                    </div>
+                    {formData.products.map((product, index) => (
+                      <div key={index} className="grid grid-cols-12 gap-2 items-center">
+                        <div className="col-span-4">
                           <Select 
-                            value={currentProduct.productId}
-                            onValueChange={(value) => handleProductSelect(value)}
+                            value={product.productId}
+                            onValueChange={(value) => handleProductChange(index, 'productId', value)}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Selecione..." />
+                              <SelectValue placeholder="Selecione um produto" />
                             </SelectTrigger>
                             <SelectContent>
-                              {mockInventory.map((product) => (
-                                <SelectItem key={product.id} value={product.id}>
-                                  {product.name}
+                              {mockInventory.map((item) => (
+                                <SelectItem key={item.id} value={item.id}>
+                                  {item.name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </div>
-                        
-                        <div className="col-span-3">
-                          <Label htmlFor="quantity">Quantidade</Label>
+                        <div className="col-span-2">
                           <Input
-                            id="quantity"
                             type="number"
                             min="1"
-                            value={currentProduct.quantity}
-                            onChange={(e) => setCurrentProduct({
-                              ...currentProduct,
-                              quantity: parseInt(e.target.value)
-                            })}
+                            value={product.quantity}
+                            onChange={(e) => handleProductChange(index, 'quantity', parseInt(e.target.value, 10) || 1)}
+                            placeholder="Qtd."
                           />
                         </div>
-                        
                         <div className="col-span-3">
-                          <Label htmlFor="unitPrice">Preço Unit.</Label>
                           <Input
-                            id="unitPrice"
                             type="number"
-                            step="0.01"
                             min="0"
-                            value={currentProduct.unitPrice}
-                            onChange={(e) => setCurrentProduct({
-                              ...currentProduct,
-                              unitPrice: parseFloat(e.target.value)
-                            })}
+                            step="0.01"
+                            value={product.unitPrice}
+                            onChange={(e) => handleProductChange(index, 'unitPrice', parseFloat(e.target.value) || 0)}
+                            placeholder="Valor unit."
                           />
                         </div>
-                        
-                        <div className="col-span-1 flex items-end">
-                          <Button 
-                            type="button" 
-                            size="sm" 
-                            onClick={handleAddProduct}
-                            className="w-full"
+                        <div className="col-span-2">
+                          <p className="text-right font-medium">
+                            {formatCurrency(product.quantity * product.unitPrice)}
+                          </p>
+                        </div>
+                        <div className="col-span-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-500 hover:text-red-500"
+                            onClick={() => removeProductRow(index)}
+                            disabled={formData.products.length <= 1}
                           >
-                            +
+                            &times;
                           </Button>
                         </div>
                       </div>
-                      
-                      {formData.products.length > 0 ? (
-                        <div className="mt-4">
-                          <table className="w-full">
-                            <thead>
-                              <tr className="border-b text-sm">
-                                <th className="text-left py-2">Produto</th>
-                                <th className="text-right py-2">Qtd</th>
-                                <th className="text-right py-2">Preço Unit.</th>
-                                <th className="text-right py-2">Total</th>
-                                <th className="py-2"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {formData.products.map((product, index) => (
-                                <tr key={index} className="border-b text-sm">
-                                  <td className="py-2">{product.name}</td>
-                                  <td className="text-right py-2">{product.quantity}</td>
-                                  <td className="text-right py-2">
-                                    {product.unitPrice.toLocaleString('pt-BR', {
-                                      style: 'currency',
-                                      currency: 'BRL'
-                                    })}
-                                  </td>
-                                  <td className="text-right py-2">
-                                    {(product.quantity * product.unitPrice).toLocaleString('pt-BR', {
-                                      style: 'currency',
-                                      currency: 'BRL'
-                                    })}
-                                  </td>
-                                  <td className="py-2">
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleRemoveProduct(index)}
-                                    >
-                                      <Trash className="h-4 w-4 text-red-500" />
-                                    </Button>
-                                  </td>
-                                </tr>
-                              ))}
-                              <tr>
-                                <td colSpan={3} className="text-right font-bold py-2">Total:</td>
-                                <td className="text-right font-bold py-2">
-                                  {calculateTotal().toLocaleString('pt-BR', {
-                                    style: 'currency',
-                                    currency: 'BRL'
-                                  })}
-                                </td>
-                                <td></td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      ) : (
-                        <p className="text-sm text-center text-gray-500 py-2">
-                          Nenhum produto adicionado
-                        </p>
-                      )}
+                    ))}
+                    <div className="flex justify-end">
+                      <p className="font-bold">Total: {formatCurrency(calculateTotal())}</p>
                     </div>
                   </div>
                   
@@ -299,7 +242,7 @@ const SalespersonSalesPage = () => {
                       <Label htmlFor="paymentMethod">Forma de Pagamento</Label>
                       <Select 
                         value={formData.paymentMethod}
-                        onValueChange={(value: any) => handleSelectChange(value, 'paymentMethod')}
+                        onValueChange={(value) => handleSelectChange(value, 'paymentMethod')}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione..." />
@@ -327,13 +270,13 @@ const SalespersonSalesPage = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="orderNumber">Número do Pedido (opcional)</Label>
+                      <Label htmlFor="orderNumber">Número do Pedido (Opcional)</Label>
                       <Input
                         id="orderNumber"
                         name="orderNumber"
                         value={formData.orderNumber}
                         onChange={handleInputChange}
-                        placeholder="Gerado automaticamente se vazio"
+                        placeholder="Gerado automaticamente se não informado"
                       />
                     </div>
                   </div>
@@ -351,13 +294,11 @@ const SalespersonSalesPage = () => {
         </div>
 
         {userSales.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userSales.map((sale) => (
               <Card key={sale.id}>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">
-                    Pedido #{sale.orderNumber}
-                  </CardTitle>
+                  <CardTitle className="text-lg">{sale.clientName}</CardTitle>
                   <div className="text-sm text-gray-500 flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
                     {new Date(sale.createdAt).toLocaleDateString()}
@@ -365,46 +306,39 @@ const SalespersonSalesPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center">
-                    <User className="w-4 h-4 mr-2 text-gray-500" />
-                    <p className="text-sm">{sale.clientName}</p>
+                    <FileText className="w-4 h-4 mr-2 text-gray-500" />
+                    <p className="text-sm">Pedido: {sale.orderNumber}</p>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <DollarSign className="w-4 h-4 mr-2 text-gray-500" />
+                    <p className="text-sm font-medium">{formatCurrency(sale.totalValue)}</p>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <CreditCard className="w-4 h-4 mr-2 text-gray-500" />
+                    <p className="text-sm">{getPaymentMethodLabel(sale.paymentMethod)}</p>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <Truck className="w-4 h-4 mr-2 text-gray-500" />
+                    <p className="text-sm">Entrega: {new Date(sale.deliveryDate).toLocaleDateString()}</p>
                   </div>
                   
                   <div>
-                    <p className="text-sm font-medium">Produtos:</p>
-                    <div className="space-y-1 mt-1">
-                      {sale.products.map((product, idx) => (
-                        <div key={idx} className="flex justify-between text-sm">
-                          <span className="flex items-center">
-                            <Package className="w-3 h-3 mr-1 text-gray-500" />
-                            {product.name} x{product.quantity}
-                          </span>
+                    <p className="text-sm font-medium mt-1">Produtos:</p>
+                    <div className="mt-1 space-y-1">
+                      {sale.products.map((product, index) => (
+                        <div key={index} className="flex justify-between text-sm">
                           <span>
-                            {(product.quantity * product.unitPrice).toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL'
-                            })}
+                            {product.quantity}x {product.name}
+                          </span>
+                          <span className="font-medium">
+                            {formatCurrency(product.quantity * product.unitPrice)}
                           </span>
                         </div>
                       ))}
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between pt-2 border-t">
-                    <div className="flex items-center">
-                      <CreditCard className="w-4 h-4 mr-2 text-gray-500" />
-                      <p className="text-sm">{paymentMethodLabel(sale.paymentMethod)}</p>
-                    </div>
-                    <p className="font-bold">
-                      {sale.totalValue.toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                      })}
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-center text-sm text-gray-500">
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    <p>Entrega: {new Date(sale.deliveryDate).toLocaleDateString()}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -413,7 +347,7 @@ const SalespersonSalesPage = () => {
         ) : (
           <Card>
             <CardContent className="py-8 text-center">
-              <TrendingUp className="h-12 w-12 mx-auto text-gray-400" />
+              <FileText className="h-12 w-12 mx-auto text-gray-400" />
               <p className="mt-2 font-medium">Nenhuma venda registrada</p>
               <p className="text-sm text-gray-500">
                 Clique em "Nova Venda" para começar a registrar suas vendas.
