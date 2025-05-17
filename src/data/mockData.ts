@@ -1,4 +1,3 @@
-
 import { User } from '@/contexts/AuthContext';
 import { Visit, Prospect, Sale, ScheduledVisit, InventoryItem, Promotion, Notification } from '@/models/types';
 
@@ -162,8 +161,8 @@ export const mockScheduledVisits: ScheduledVisit[] = [
   },
 ];
 
-// Mock Inventory Items
-export const mockInventoryItems: InventoryItem[] = [
+// Mock Inventory Items - rename to mockInventory for consistency
+export const mockInventory: InventoryItem[] = [
   {
     id: '1',
     name: 'Pneu XL-300',
@@ -204,6 +203,9 @@ export const mockInventoryItems: InventoryItem[] = [
     updatedAt: '2023-05-01T00:00:00Z',
   },
 ];
+
+// We'll keep the existing mockInventoryItems as an alias for backward compatibility
+export const mockInventoryItems = mockInventory;
 
 // Mock Promotions
 export const mockPromotions: Promotion[] = [
