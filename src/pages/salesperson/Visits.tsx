@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
@@ -13,13 +14,70 @@ import { PlusCircle, MapPin, Calendar, Clock, User, Building, Phone, FileText } 
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Visit } from '@/models/types';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+
+// Mock data for client list (reusing the structure from Clients page)
+const mockClients = [
+  {
+    id: '1',
+    name: 'Auto Peças Silva',
+    contactName: 'Roberto Silva',
+    phone: '(11) 98765-4321',
+    email: 'roberto@autopecassilva.com.br',
+    address: 'Av. Paulista, 1000, São Paulo - SP',
+    city: 'São Paulo',
+    status: 'active',
+  },
+  {
+    id: '2',
+    name: 'Transportes Rápidos',
+    contactName: 'Ana Santos',
+    phone: '(11) 91234-5678',
+    email: 'ana@transportesrapidos.com.br',
+    address: 'Rua Augusta, 500, São Paulo - SP',
+    city: 'São Paulo',
+    status: 'active',
+  },
+  {
+    id: '3',
+    name: 'Oficina Mecânica Central',
+    contactName: 'Carlos Oliveira',
+    phone: '(11) 97890-1234',
+    email: 'carlos@mecanicacentral.com.br',
+    address: 'Rua Vergueiro, 200, São Paulo - SP',
+    city: 'São Paulo',
+    status: 'inactive',
+  },
+  {
+    id: '4',
+    name: 'Frota Express',
+    contactName: 'Fernanda Lima',
+    phone: '(11) 94567-8901',
+    email: 'fernanda@frotaexpress.com.br',
+    address: 'Av. Brasil, 1500, São Paulo - SP',
+    city: 'São Paulo',
+    status: 'active',
+  },
+  {
+    id: '5',
+    name: 'Diesel Truck',
+    contactName: 'Marcos Souza',
+    phone: '(11) 92345-6789',
+    email: 'marcos@dieseltruck.com.br',
+    address: 'Rua Consolação, 800, São Paulo - SP',
+    city: 'São Paulo',
+    status: 'inactive',
+  }
+];
 
 interface VisitFormData {
   clientName: string;
   address: string;
   city: string;
   contactName: string;
-  contactInfo: string; // Changed from contactPhone to contactInfo to match models/types.ts
+  contactInfo: string;
   arrivalTime: string;
   departureTime: string;
   subject: string;
@@ -32,7 +90,7 @@ const initialFormData: VisitFormData = {
   address: '',
   city: '',
   contactName: '',
-  contactInfo: '', // Changed from contactPhone to contactInfo
+  contactInfo: '',
   arrivalTime: '',
   departureTime: '',
   subject: '',
@@ -42,9 +100,11 @@ const initialFormData: VisitFormData = {
 
 const SalespersonVisitsPage = () => {
   const { user } = useAuth();
-  const [visits, setVisits] = useState<Visit[]>(mockVisits); // Using the imported Visit type
+  const [visits, setVisits] = useState<Visit[]>(mockVisits);
   const [formData, setFormData] = useState<VisitFormData>(initialFormData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [openCombobox, setOpenCombobox] = useState(false);
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -53,6 +113,22 @@ const SalespersonVisitsPage = () => {
 
   const handleSelectChange = (value: string, name: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleClientSelection = (clientId: string) => {
+    const selectedClient = mockClients.find(client => client.id === clientId);
+    if (selectedClient) {
+      setSelectedClientId(clientId);
+      setFormData(prev => ({
+        ...prev,
+        clientName: selectedClient.name,
+        address: selectedClient.address,
+        city: selectedClient.city,
+        contactName: selectedClient.contactName,
+        contactInfo: selectedClient.phone,
+      }));
+      setOpenCombobox(false);
+    }
   };
 
   const currentDate = new Date().toISOString().split('T')[0];
@@ -73,7 +149,7 @@ const SalespersonVisitsPage = () => {
       address: formData.address,
       city: formData.city,
       contactName: formData.contactName,
-      contactInfo: formData.contactInfo, // Changed from contactPhone to contactInfo
+      contactInfo: formData.contactInfo,
       arrivalTime: formData.arrivalTime,
       departureTime: formData.departureTime,
       subject: formData.subject,
@@ -87,6 +163,7 @@ const SalespersonVisitsPage = () => {
     
     setVisits(prev => [...prev, newVisit]);
     setFormData(initialFormData);
+    setSelectedClientId(null);
     setIsDialogOpen(false);
     toast.success('Visita registrada com sucesso!');
   };
@@ -122,14 +199,59 @@ const SalespersonVisitsPage = () => {
               <form onSubmit={handleSubmit} className="space-y-4 pt-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="clientName">Nome da Empresa/Cliente</Label>
-                    <Input
-                      id="clientName"
-                      name="clientName"
-                      value={formData.clientName}
-                      onChange={handleInputChange}
-                      required
-                    />
+                    <Label htmlFor="clientNameCombobox">Nome da Empresa/Cliente</Label>
+                    <Popover open={openCombobox} onOpenChange={setOpenCombobox}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openCombobox}
+                          className="w-full justify-between"
+                        >
+                          {formData.clientName || "Selecione ou digite um cliente..."}
+                          <Building className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[300px] p-0" align="start">
+                        <Command>
+                          <CommandInput 
+                            placeholder="Buscar cliente..." 
+                            onValueChange={(search) => {
+                              if (!openCombobox) setOpenCombobox(true);
+                              // Update clientName when typing to allow for new clients
+                              setFormData(prev => ({ ...prev, clientName: search }));
+                            }} 
+                          />
+                          <CommandEmpty>Nenhum cliente encontrado. Continue digitando para registrar um novo.</CommandEmpty>
+                          <CommandList>
+                            <CommandGroup heading="Clientes">
+                              {mockClients
+                                .filter(client => 
+                                  client.name.toLowerCase().includes(formData.clientName?.toLowerCase() || '')
+                                )
+                                .map(client => (
+                                  <CommandItem
+                                    key={client.id}
+                                    onSelect={() => {
+                                      handleClientSelection(client.id);
+                                    }}
+                                    className={cn(
+                                      "cursor-pointer",
+                                      selectedClientId === client.id ? "bg-accent" : ""
+                                    )}
+                                  >
+                                    <Building className="mr-2 h-4 w-4" />
+                                    {client.name}
+                                  </CommandItem>
+                                ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <p className="text-sm text-muted-foreground">
+                      Digite para buscar ou cadastrar um novo cliente
+                    </p>
                   </div>
                   
                   <div className="space-y-2">
