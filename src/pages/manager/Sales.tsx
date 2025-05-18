@@ -5,13 +5,9 @@ import { mockSales } from '@/data/mockData';
 import { Card, CardContent } from '@/components/ui/card';
 import { SalesTable } from '@/components/sales/SalesTable';
 import { SalesChart } from '@/components/sales/SalesChart';
-import { SalesByRegionChart } from '@/components/sales/SalesByRegionChart';
 import { SalesSummary } from '@/components/sales/SalesSummary';
 import { useAuth } from '@/contexts/AuthContext';
 import { SalesTrendCard } from '@/components/sales/SalesTrendCard';
-import { ClientHeatmapCard } from '@/components/sales/ClientHeatmapCard';
-import { LowStockItemsCard } from '@/components/sales/LowStockItemsCard';
-import { SalesPerformanceByPersonCard } from '@/components/sales/SalesPerformanceByPersonCard';
 
 const ManagerSalesPage = () => {
   const { user } = useAuth();
@@ -26,19 +22,15 @@ const ManagerSalesPage = () => {
         {/* Dashboard Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <SalesTrendCard />
-          <ClientHeatmapCard />
-          <LowStockItemsCard />
-          <SalesPerformanceByPersonCard />
         </div>
         
         <SalesSummary sales={mockSales} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
           <SalesChart 
             sales={mockSales}
             title="Desempenho da Equipe"
           />
-          <SalesByRegionChart sales={mockSales} />
         </div>
         
         <Card>
