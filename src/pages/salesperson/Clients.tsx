@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { 
@@ -185,6 +184,7 @@ const mockPurchaseHistory: Record<string, Sale[]> = {
       totalValue: 3150.00,
       paymentMethod: 'invoice',
       deliveryDate: '2025-05-10',
+      date: new Date().toISOString(), // Add this line
       orderNumber: 'ORD-2025-0123',
       salesPersonId: 'sp001',
       createdAt: '2025-05-05'
@@ -198,6 +198,7 @@ const mockPurchaseHistory: Record<string, Sale[]> = {
       totalValue: 5000.00,
       paymentMethod: 'credit',
       deliveryDate: '2025-04-15',
+      date: new Date().toISOString(), // Add this line
       orderNumber: 'ORD-2025-0098',
       salesPersonId: 'sp001',
       createdAt: '2025-04-10'
@@ -214,6 +215,7 @@ const mockPurchaseHistory: Record<string, Sale[]> = {
       totalValue: 6050.00,
       paymentMethod: 'transfer',
       deliveryDate: '2025-05-05',
+      date: new Date().toISOString(), // Add this line
       orderNumber: 'ORD-2025-0115',
       salesPersonId: 'sp002',
       createdAt: '2025-04-28'

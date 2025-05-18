@@ -12,6 +12,7 @@ export interface User {
   region?: string;
   cpfCnpj?: string;
   phone?: string;
+  active?: boolean; // Added active property
 }
 
 interface AuthContextType {
