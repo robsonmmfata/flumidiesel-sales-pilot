@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,6 +16,8 @@ import { Visit } from '@/models/types';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import MapVisits from '@/components/MapVisits';
+import VisitRouteOptimizer from '@/components/VisitRouteOptimizer';
 
 // Mock data for client list (reusing the structure from Clients page)
 const mockClients = [
@@ -195,6 +196,9 @@ const SalespersonVisitsPage = () => {
             <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Registrar Nova Visita</DialogTitle>
+                <DialogDescription>
+                  Registre informações sobre sua visita a um cliente.
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4 pt-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -378,7 +382,9 @@ const SalespersonVisitsPage = () => {
           <TabsList>
             <TabsTrigger value="list">Lista</TabsTrigger>
             <TabsTrigger value="map">Mapa</TabsTrigger>
+            <TabsTrigger value="route">Roteirização</TabsTrigger>
           </TabsList>
+          
           <TabsContent value="list">
             {userVisits.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -447,12 +453,25 @@ const SalespersonVisitsPage = () => {
               </Card>
             )}
           </TabsContent>
+          
           <TabsContent value="map">
             <Card>
-              <CardContent className="py-8">
-                <div className="h-[400px] flex items-center justify-center bg-gray-100 rounded-md">
-                  <p className="text-gray-500">Mapa de visitas será implementado em breve</p>
-                </div>
+              <CardHeader>
+                <CardTitle>Mapa de Visitas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MapVisits visits={userVisits} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="route">
+            <Card>
+              <CardHeader>
+                <CardTitle>Otimização de Rotas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <VisitRouteOptimizer visits={userVisits} />
               </CardContent>
             </Card>
           </TabsContent>
