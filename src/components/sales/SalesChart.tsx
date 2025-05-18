@@ -23,10 +23,9 @@ interface SalesChartProps {
   title: string;
 }
 
-// Group sales by salesperson
 export const SalesChart: React.FC<SalesChartProps> = ({ sales, title }) => {
+  // Group sales by salesperson
   const salesByPerson = sales.reduce((acc: Record<string, { total: number, name: string }>, sale) => {
-    // Use salesPersonId as key
     const salesPersonId = sale.salesPersonId;
     const salesPersonName = sale.salesPersonName || `Vendedor ${salesPersonId}`;
     
@@ -48,13 +47,16 @@ export const SalesChart: React.FC<SalesChartProps> = ({ sales, title }) => {
     salesPersonId: id
   }));
 
+  // Sort data by value in descending order for better visualization
+  chartData.sort((a, b) => b.value - a.value);
+
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[350px]">
           <ChartContainer
             config={{
               sales: {
@@ -67,18 +69,25 @@ export const SalesChart: React.FC<SalesChartProps> = ({ sales, title }) => {
             }}
           >
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+              <BarChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 40 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                  padding={{ left: 10, right: 10 }}
+                  angle={0}
+                  textAnchor="middle"
+                />
                 <YAxis 
+                  axisLine={false}
+                  tickLine={false}
                   tickFormatter={(value) => 
-                    new Intl.NumberFormat('pt-BR', {
-                      notation: 'compact',
-                      compactDisplay: 'short',
-                      style: 'currency',
-                      currency: 'BRL'
-                    }).format(value)
+                    `R$ ${(value / 1000).toLocaleString('pt-BR')} mil`
                   }
+                  tick={{ fontSize: 12 }}
+                  domain={[0, 'dataMax + 10000']}
                 />
                 <Tooltip
                   content={({ active, payload }) => {
@@ -112,11 +121,12 @@ export const SalesChart: React.FC<SalesChartProps> = ({ sales, title }) => {
                     return null;
                   }}
                 />
-                <Legend />
                 <Bar 
                   dataKey="value" 
-                  fill="var(--color-sales)" 
-                  name="Valor de Vendas" 
+                  fill="#3b82f6"
+                  radius={[4, 4, 0, 0]}
+                  name="Valor de Vendas"
+                  barSize={40}
                 />
               </BarChart>
             </ResponsiveContainer>

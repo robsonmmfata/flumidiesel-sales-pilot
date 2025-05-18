@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { mockSales } from '@/data/mockData';
@@ -66,12 +65,10 @@ const AdminSalesPage = () => {
         
         <SalesSummary sales={filteredSales} />
         
-        <div className="grid grid-cols-1 gap-6">
-          <SalesChart 
-            sales={filteredSales}
-            title="Vendas por Vendedor"
-          />
-        </div>
+        <SalesChart 
+          sales={filteredSales}
+          title="Desempenho da Equipe"
+        />
         
         <Card>
           <CardContent className="pt-6">
