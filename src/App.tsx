@@ -12,7 +12,7 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUsersPage from "./pages/admin/Users";
 import AdminClientsPage from "./pages/admin/Clients";
-import AdminSalesPage from "./pages/admin/Sales";
+// Removed import for AdminSalesPage
 import AdminInventoryPage from "./pages/admin/Inventory";
 import AdminPromotionsPage from "./pages/admin/Promotions";
 
@@ -55,7 +55,7 @@ const App = () => (
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<AdminUsersPage />} />
               <Route path="/admin/clients" element={<AdminClientsPage />} />
-              <Route path="/admin/sales" element={<AdminSalesPage />} />
+              {/* Removed admin sales route */}
               <Route path="/admin/inventory" element={<AdminInventoryPage />} />
               <Route path="/admin/promotions" element={<AdminPromotionsPage />} />
             </Route>

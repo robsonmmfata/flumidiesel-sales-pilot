@@ -68,7 +68,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const baseRoute = isAdmin ? '/admin' : isManager ? '/manager' : '/salesperson';
 
-  // Define links based on user role - removed visits, schedule, and prospects from manager
+  // Define links based on user role - removed sales from admin
   const sidebarLinks = [
     { 
       to: `${baseRoute}/dashboard`, 
@@ -117,7 +117,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       icon: <TrendingUp size={20} />, 
       label: 'Vendas', 
       isActive: pathname === `${baseRoute}/sales`,
-      roles: ['admin', 'salesperson'] 
+      roles: ['salesperson'] 
     },
     { 
       to: `${baseRoute}/inventory`, 
