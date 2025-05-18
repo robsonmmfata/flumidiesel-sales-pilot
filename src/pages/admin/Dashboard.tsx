@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -342,7 +341,7 @@ const AdminDashboard = () => {
                       <tr key={sale.id} className="border-b">
                         <td className="py-2">{sale.clientName}</td>
                         <td className="py-2">{format(new Date(sale.date), 'dd/MM/yyyy', { locale: ptBR })}</td>
-                        <td className="py-2">{sale.salespersonName}</td>
+                        <td className="py-2">{sale.salesPersonName}</td>
                         <td className="py-2 text-right">
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(sale.totalValue)}
                         </td>

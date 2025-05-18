@@ -8,6 +8,7 @@ export const mockUsers: User[] = [
     name: 'Admin User',
     email: 'admin@flumidiesel.com',
     role: 'admin',
+    active: true, // Added active property
   },
   {
     id: '2',
@@ -17,6 +18,7 @@ export const mockUsers: User[] = [
     region: 'Norte',
     cpfCnpj: '123.456.789-00',
     phone: '(11) 98765-4321',
+    active: true, // Added active property
   },
   {
     id: '3',
@@ -26,6 +28,7 @@ export const mockUsers: User[] = [
     region: 'Sul',
     cpfCnpj: '987.654.321-00',
     phone: '(21) 98765-4321',
+    active: true, // Added active property
   },
 ];
 
@@ -218,9 +221,11 @@ export const mockSales: Sale[] = [
     totalValue: 10000,
     paymentMethod: 'invoice',
     deliveryDate: '2023-05-20T00:00:00Z',
+    date: '2023-05-15T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-001',
     salesPersonId: '3',
     salesPersonName: 'Maria Santos',
+    status: 'completed', // Added status property
     createdAt: '2023-05-15T00:00:00Z',
   },
   // Novos exemplos de vendas
@@ -244,9 +249,11 @@ export const mockSales: Sale[] = [
     totalValue: 6000,
     paymentMethod: 'credit',
     deliveryDate: '2023-06-05T00:00:00Z',
+    date: '2023-05-25T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-002',
     salesPersonId: 'BALCAO',
     salesPersonName: 'BALCAO PECAS - ATACADO',
+    status: 'completed', // Added status property
     createdAt: '2023-05-25T00:00:00Z',
   },
   {
@@ -263,9 +270,11 @@ export const mockSales: Sale[] = [
     totalValue: 14400,
     paymentMethod: 'transfer',
     deliveryDate: '2023-06-10T00:00:00Z',
+    date: '2023-05-28T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-003',
     salesPersonId: 'DAIANE',
     salesPersonName: 'DAIANE ARANTES',
+    status: 'completed', // Added status property
     createdAt: '2023-05-28T00:00:00Z',
   },
   {
@@ -288,9 +297,11 @@ export const mockSales: Sale[] = [
     totalValue: 8600,
     paymentMethod: 'invoice',
     deliveryDate: '2023-06-15T00:00:00Z',
+    date: '2023-06-01T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-004',
     salesPersonId: 'ESCRITORIO',
     salesPersonName: 'ESCRITORIO DE PECAS',
+    status: 'completed', // Added status property
     createdAt: '2023-06-01T00:00:00Z',
   },
   {
@@ -313,9 +324,11 @@ export const mockSales: Sale[] = [
     totalValue: 28800,
     paymentMethod: 'invoice',
     deliveryDate: '2023-06-20T00:00:00Z',
+    date: '2023-06-05T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-005',
     salesPersonId: 'WAGNER',
     salesPersonName: 'WAGNER COSTA BATISTA',
+    status: 'pending', // Added status property
     createdAt: '2023-06-05T00:00:00Z',
   },
   {
@@ -338,9 +351,11 @@ export const mockSales: Sale[] = [
     totalValue: 40900,
     paymentMethod: 'transfer',
     deliveryDate: '2023-06-25T00:00:00Z',
+    date: '2023-06-10T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-006',
     salesPersonId: 'DAIANE',
     salesPersonName: 'DAIANE ARANTES',
+    status: 'pending', // Added status property
     createdAt: '2023-06-10T00:00:00Z',
   },
   {
@@ -363,9 +378,11 @@ export const mockSales: Sale[] = [
     totalValue: 23040,
     paymentMethod: 'credit',
     deliveryDate: '2023-06-28T00:00:00Z',
+    date: '2023-06-15T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-007',
     salesPersonId: 'WAGNER',
     salesPersonName: 'WAGNER COSTA BATISTA',
+    status: 'completed', // Added status property
     createdAt: '2023-06-15T00:00:00Z',
   },
   {
@@ -382,9 +399,11 @@ export const mockSales: Sale[] = [
     totalValue: 7000,
     paymentMethod: 'debit',
     deliveryDate: '2023-07-05T00:00:00Z',
+    date: '2023-06-20T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-008',
     salesPersonId: 'BALCAO',
     salesPersonName: 'BALCAO PECAS - ATACADO',
+    status: 'completed', // Added status property
     createdAt: '2023-06-20T00:00:00Z',
   },
   {
@@ -413,9 +432,11 @@ export const mockSales: Sale[] = [
     totalValue: 26400,
     paymentMethod: 'invoice',
     deliveryDate: '2023-07-10T00:00:00Z',
+    date: '2023-06-25T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-009',
     salesPersonId: 'ESCRITORIO',
     salesPersonName: 'ESCRITORIO DE PECAS',
+    status: 'completed', // Added status property
     createdAt: '2023-06-25T00:00:00Z',
   },
   {
@@ -432,9 +453,11 @@ export const mockSales: Sale[] = [
     totalValue: 28800,
     paymentMethod: 'transfer',
     deliveryDate: '2023-07-15T00:00:00Z',
+    date: '2023-07-01T00:00:00Z', // Added date property
     orderNumber: 'ORD-2023-010',
     salesPersonId: 'DAIANE',
     salesPersonName: 'DAIANE ARANTES',
+    status: 'completed', // Added status property
     createdAt: '2023-07-01T00:00:00Z',
   },
 ];

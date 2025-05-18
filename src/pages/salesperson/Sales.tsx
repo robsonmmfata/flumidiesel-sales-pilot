@@ -107,8 +107,10 @@ const SalespersonSalesPage = () => {
       totalValue: calculateTotal(),
       paymentMethod: formData.paymentMethod,
       deliveryDate: formData.deliveryDate,
+      date: new Date().toISOString(), // Added date property
       orderNumber: orderNumber,
       salesPersonId: user?.id || '',
+      status: 'pending', // Added status property with default value
       createdAt: new Date().toISOString(),
     };
     
