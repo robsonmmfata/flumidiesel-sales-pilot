@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -13,7 +12,7 @@ interface MapVisitsProps {
 const MapVisits: React.FC<MapVisitsProps> = ({ visits, routeOptimized = false }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState<string>('');
+  const [mapboxToken, setMapboxToken] = useState<string>("pk.eyJ1IjoibXBtMjAyNSIsImEiOiJjbWF0cWJtbnYwZ25xMmpxMW8zZXU1NDJzIn0.YZbHk4oZ9Hx0RyOL_0zvfQ");
   const [isTokenValid, setIsTokenValid] = useState<boolean>(false);
   
   // Filter visits that have location data
@@ -167,24 +166,7 @@ const MapVisits: React.FC<MapVisitsProps> = ({ visits, routeOptimized = false })
 
   return (
     <div className="space-y-4">
-      {!mapboxToken && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Mapbox Access Token</label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Cole seu token do Mapbox aqui"
-              className="flex-1 border rounded-md p-2"
-              onChange={(e) => setMapboxToken(e.target.value)}
-            />
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Crie uma conta no <a href="https://www.mapbox.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">Mapbox</a> e obtenha um token de acesso público
-          </p>
-        </div>
-      )}
-
-      {mapboxToken && !isTokenValid && (
+      {!isTokenValid && mapboxToken && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           Token do Mapbox inválido. Por favor, verifique o token e tente novamente.
         </div>
