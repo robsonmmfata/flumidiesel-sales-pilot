@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, Filter, Settings, Droplet, Tool } from 'lucide-react';
+import { Package, Filter, Settings, Droplet, Wrench } from 'lucide-react';
 import { 
   Table,
   TableBody,
@@ -148,7 +147,7 @@ const ManagerInventoryPage = () => {
       case 'Injetores': return <Settings className="h-5 w-5" />;
       case 'Bombas': return <Package className="h-5 w-5" />;
       case 'Lubrificantes': return <Droplet className="h-5 w-5" />;
-      case 'Kits': return <Tool className="h-5 w-5" />;
+      case 'Kits': return <Wrench className="h-5 w-5" />;
       default: return <Package className="h-5 w-5" />;
     }
   };
