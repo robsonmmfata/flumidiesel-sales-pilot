@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,7 +12,8 @@ import {
   TrendingUp,
   Bell,
   Package,
-  Search
+  Search,
+  UserRound
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -81,6 +83,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       label: 'Usuários', 
       isActive: pathname === `${baseRoute}/users`,
       roles: ['admin'] 
+    },
+    { 
+      to: `${baseRoute}/clients`, 
+      icon: <UserRound size={20} />, 
+      label: 'Clientes', 
+      isActive: pathname === `${baseRoute}/clients`,
+      roles: ['admin', 'manager', 'salesperson'] 
     },
     { 
       to: `${baseRoute}/visits`, 
