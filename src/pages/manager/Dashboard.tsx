@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,9 +5,7 @@ import {
   TrendingUp,
   Users,
   ClipboardCheck,
-  Calendar,
-  BarChart,
-  PieChart
+  Calendar
 } from 'lucide-react';
 import { mockVisits, mockProspects, mockSales, mockScheduledVisits, mockUsers } from '@/data/mockData';
 import { useAuth } from '@/contexts/AuthContext';
@@ -218,23 +215,9 @@ const ManagerDashboard = () => {
               </div>
             </CardContent>
           </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Cidades mais visitadas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex h-[200px] items-center justify-center">
-                <div className="flex items-center space-x-2 text-muted-foreground">
-                  <BarChart className="h-12 w-12" />
-                  <div>Gráfico de visitas por cidade</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Próximas Visitas da Equipe</CardTitle>
@@ -263,20 +246,6 @@ const ManagerDashboard = () => {
               ) : (
                 <p className="text-muted-foreground text-sm">Não há visitas agendadas para este período</p>
               )}
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Distribuição de Prospectos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex h-[200px] items-center justify-center">
-                <div className="flex items-center space-x-2 text-muted-foreground">
-                  <PieChart className="h-12 w-12" />
-                  <div>Gráfico de prospectos por interesse</div>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>
