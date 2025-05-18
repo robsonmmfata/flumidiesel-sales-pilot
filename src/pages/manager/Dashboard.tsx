@@ -375,14 +375,16 @@ const ManagerDashboard = () => {
                   <TableCell>{mockUsers.find(u => u.id === visit.salesPersonId)?.name || 'N/A'}</TableCell>
                   <TableCell>{new Date(visit.date).toLocaleDateString('pt-BR')}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      visit.result === 'success' ? 'bg-green-100 text-green-800' : 
-                      visit.result === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {visit.result === 'success' ? 'Sucesso' : 
-                       visit.result === 'pending' ? 'Pendente' : 'Sem interesse'}
-                    </span>
+                    {visit.result && (
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        visit.result === 'success' ? 'bg-green-100 text-green-800' : 
+                        visit.result === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {visit.result === 'success' ? 'Sucesso' : 
+                        visit.result === 'pending' ? 'Pendente' : 'Sem interesse'}
+                      </span>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -410,9 +412,9 @@ const ManagerDashboard = () => {
             <TableBody>
               {filteredProspects.map((prospect) => (
                 <TableRow key={prospect.id}>
-                  <TableCell>{prospect.name}</TableCell>
-                  <TableCell>{prospect.company}</TableCell>
-                  <TableCell>{prospect.city}</TableCell>
+                  <TableCell>{prospect.name || prospect.clientName}</TableCell>
+                  <TableCell>{prospect.company || 'N/A'}</TableCell>
+                  <TableCell>{prospect.city || 'N/A'}</TableCell>
                   <TableCell>{mockUsers.find(u => u.id === prospect.salesPersonId)?.name || 'N/A'}</TableCell>
                   <TableCell>
                     {prospect.requestedQuote ? 

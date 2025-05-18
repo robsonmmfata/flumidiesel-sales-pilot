@@ -1,3 +1,4 @@
+
 import { User, UserRole } from '@/contexts/AuthContext';
 
 // Client Type
@@ -40,12 +41,16 @@ export interface Visit {
     latitude: number;
     longitude: number;
   };
+  result?: 'success' | 'pending' | 'failure'; // Added result property
 }
 
 // Customer Prospect
 export interface Prospect {
   id: string;
   clientName: string;
+  name?: string; // Added name property
+  company?: string; // Added company property
+  city?: string; // Added city property
   clientType: 'company' | 'fleet' | 'autonomous' | 'other';
   contactName: string;
   contactInfo: string;
