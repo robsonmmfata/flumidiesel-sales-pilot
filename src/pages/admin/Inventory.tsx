@@ -1,16 +1,263 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { mockInventoryItems } from '@/data/mockData';
 import { Search, Tag, Package, AlertCircle, Check, Edit, Trash, Plus, ArrowUpDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+
+// Lista de produtos atualizada
+const inventoryData = [
+  { 
+    id: 1, 
+    name: '195/75R16C 107/105R TL AGILIS 3 MI', 
+    category: 'PNEU', 
+    description: 'Pneu Michelin Agilis 3 para vans e utilitários leves',
+    sku: 'PNEU-001', 
+    stock: 24, 
+    price: 750.00,
+    minimumStock: 10
+  },
+  { 
+    id: 2, 
+    name: '205/70 R 15C 106/104R TL AGILIS 3 MI', 
+    category: 'PNEU', 
+    description: 'Pneu Michelin Agilis 3 para vans e utilitários',
+    sku: 'PNEU-002', 
+    stock: 16, 
+    price: 680.00,
+    minimumStock: 10
+  },
+  { 
+    id: 3, 
+    name: '205/75 R16C 113/111R TL AGILIS 3A MI', 
+    category: 'PNEU', 
+    description: 'Pneu Michelin Agilis 3A para vans e furgões',
+    sku: 'PNEU-003', 
+    stock: 20, 
+    price: 790.00,
+    minimumStock: 10
+  },
+  { 
+    id: 4, 
+    name: '215/75 R 17.5 X INCITY XZU 3 TL 126/124 MI', 
+    category: 'PNEU', 
+    description: 'Pneu Michelin X Incity para ônibus urbanos',
+    sku: 'PNEU-004', 
+    stock: 12, 
+    price: 1250.00,
+    minimumStock: 15
+  },
+  { 
+    id: 5, 
+    name: '215/75R17.5 S2250 TL 126/124M VM GO', 
+    category: 'PNEU', 
+    description: 'Pneu Goodyear para veículos de carga leves',
+    sku: 'PNEU-005', 
+    stock: 10, 
+    price: 1180.00,
+    minimumStock: 15
+  },
+  { 
+    id: 6, 
+    name: '215/75R17.5 RT TL 126/124M VU RO', 
+    category: 'PNEU', 
+    description: 'Pneu Roadone para veículos utilitários',
+    sku: 'PNEU-006', 
+    stock: 0, 
+    price: 1150.00,
+    minimumStock: 15
+  },
+  { 
+    id: 7, 
+    name: '225/65R16C 112/110R TL AGILIS 3 DT MI', 
+    category: 'PNEU', 
+    description: 'Pneu Michelin Agilis 3 para vans comerciais',
+    sku: 'PNEU-007', 
+    stock: 18, 
+    price: 720.00,
+    minimumStock: 10
+  },
+  { 
+    id: 8, 
+    name: '225/70 R 15C 112/110R TL AGILIS 3 MI', 
+    category: 'PNEU', 
+    description: 'Pneu Michelin Agilis 3 para vans de carga',
+    sku: 'PNEU-008', 
+    stock: 15, 
+    price: 690.00,
+    minimumStock: 10
+  },
+  { 
+    id: 9, 
+    name: '225/75 R 16C 118/116R TL AGILIS 3 MI', 
+    category: 'PNEU', 
+    description: 'Pneu Michelin Agilis 3 para veículos comerciais',
+    sku: 'PNEU-009', 
+    stock: 8, 
+    price: 810.00,
+    minimumStock: 10
+  },
+  { 
+    id: 10, 
+    name: '235/75R17.5 XMZ TL 132/130M MI', 
+    category: 'PNEU', 
+    description: 'Pneu Michelin XMZ para caminhões médios',
+    sku: 'PNEU-010', 
+    stock: 6, 
+    price: 1320.00,
+    minimumStock: 8
+  },
+  { 
+    id: 11, 
+    name: '275/70R22.5 X MULTI D TL 152/148 VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Michelin X Multi D para eixo motriz',
+    sku: 'PNEU-011', 
+    stock: 14, 
+    price: 1650.00,
+    minimumStock: 8
+  },
+  { 
+    id: 12, 
+    name: '275/80R22.5 ST250 TL 149/146L VG GO', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Goodyear para caminhões pesados',
+    sku: 'PNEU-012', 
+    stock: 12, 
+    price: 1580.00,
+    minimumStock: 8
+  },
+  { 
+    id: 13, 
+    name: '275/80R22.5 X INCITY Z TL 149/146 VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Michelin X Incity Z para ônibus urbanos',
+    sku: 'PNEU-013', 
+    stock: 10, 
+    price: 1620.00,
+    minimumStock: 8
+  },
+  { 
+    id: 14, 
+    name: '275/80R22.5 X MULTI Z TL 149/146L VM MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Michelin X Multi Z para uso misto',
+    sku: 'PNEU-014', 
+    stock: 5, 
+    price: 1640.00,
+    minimumStock: 8
+  },
+  { 
+    id: 15, 
+    name: '275/80R22.5 X MULTI Z TL 149/146L VM MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Michelin X Multi Z para uso misto',
+    sku: 'PNEU-015', 
+    stock: 3, 
+    price: 1640.00,
+    minimumStock: 8
+  },
+  { 
+    id: 16, 
+    name: '295/80R22.5 DR550 TL 152/148L VG GO', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Goodyear DR550 para longas distâncias',
+    sku: 'PNEU-016', 
+    stock: 7, 
+    price: 1720.00,
+    minimumStock: 6
+  },
+  { 
+    id: 17, 
+    name: '295/80R22.5 X MULTI D TL 152/148L VG GO', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Goodyear X Multi D para eixo de tração',
+    sku: 'PNEU-017', 
+    stock: 0, 
+    price: 1750.00,
+    minimumStock: 6
+  },
+  { 
+    id: 18, 
+    name: '295/80R22.5 X MULTI D2 TL 152/148L VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Michelin X Multi D2 para eixo motriz',
+    sku: 'PNEU-018', 
+    stock: 9, 
+    price: 1780.00,
+    minimumStock: 6
+  },
+  { 
+    id: 19, 
+    name: '295/80R22.5 X MULTI T TL 152/148L VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Michelin X Multi T para eixo de reboque',
+    sku: 'PNEU-019', 
+    stock: 11, 
+    price: 1760.00,
+    minimumStock: 6
+  },
+  { 
+    id: 20, 
+    name: '295/80R22.5 X MULTI Z2 TL 154/150L VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Michelin X Multi Z2 para uso misto',
+    sku: 'PNEU-020', 
+    stock: 8, 
+    price: 1790.00,
+    minimumStock: 6
+  },
+  { 
+    id: 21, 
+    name: '295/80R22.5 X MULTIWAY XZE', 
+    category: 'PNEU RECAUCHUTADO', 
+    description: 'Pneu recauchutado Michelin X Multiway XZE para eixo direcional',
+    sku: 'PNEU-021', 
+    stock: 6, 
+    price: 1850.00,
+    minimumStock: 6
+  },
+  { 
+    id: 22, 
+    name: 'JUEGO 5 - 11.00R20 XEZ', 
+    category: 'ACESSORIOS', 
+    description: 'Kit com 5 peças para pneus 11.00R20 XEZ',
+    sku: 'ACESS-001', 
+    stock: 15, 
+    price: 90.00,
+    minimumStock: 10
+  },
+  { 
+    id: 23, 
+    name: 'SEAU 3,600 KG LUBRIFIANT R5085', 
+    category: 'ACESSORIOS', 
+    description: 'Lubrificante para montagem de pneus, balde de 3,6kg',
+    sku: 'ACESS-002', 
+    stock: 20, 
+    price: 150.00,
+    minimumStock: 10
+  },
+];
+
+// Lista de vendedores
+const vendedores = [
+  { id: 1, nome: 'BALCAO PEÇAS - ATACADO' },
+  { id: 2, nome: 'DAIANE ARANTES' },
+  { id: 3, nome: 'ESCRITÓRIO DE PEÇAS' },
+  { id: 4, nome: 'WAGNER COSTA BATISTA' }
+];
+
+// Lista de categorias de produtos
+const categoriasProdutos = [
+  'ACESSORIOS',
+  'PNEU',
+  'PNEU RECAUCHUTADO'
+];
 
 const AdminInventoryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,10 +278,10 @@ const AdminInventoryPage = () => {
   });
 
   // Extract unique categories from inventory items
-  const categories = ['all', ...Array.from(new Set(mockInventoryItems.map(item => item.category)))];
+  const categories = ['all', ...Array.from(new Set(inventoryData.map(item => item.category)))];
 
   // Filter inventory items based on search term and category
-  const filteredItems = mockInventoryItems.filter(item => {
+  const filteredItems = inventoryData.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           item.sku.toLowerCase().includes(searchTerm.toLowerCase());
@@ -298,10 +545,10 @@ const AdminInventoryPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {formatCurrency(mockInventoryItems.reduce((sum, item) => sum + (item.price * item.stock), 0))}
+                    {formatCurrency(inventoryData.reduce((sum, item) => sum + (item.price * item.stock), 0))}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {mockInventoryItems.length} produtos diferentes
+                    {inventoryData.length} produtos diferentes
                   </p>
                 </CardContent>
               </Card>
@@ -311,7 +558,7 @@ const AdminInventoryPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {mockInventoryItems.filter(item => item.stock === 0).length}
+                    {inventoryData.filter(item => item.stock === 0).length}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Produtos que precisam ser repostos imediatamente
@@ -324,7 +571,7 @@ const AdminInventoryPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {mockInventoryItems.filter(item => item.stock > 0 && item.stock <= item.minimumStock).length}
+                    {inventoryData.filter(item => item.stock > 0 && item.stock <= item.minimumStock).length}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Produtos abaixo do nível mínimo de estoque
@@ -338,9 +585,9 @@ const AdminInventoryPage = () => {
                 <CardTitle>Itens com Estoque Crítico</CardTitle>
               </CardHeader>
               <CardContent>
-                {mockInventoryItems.filter(item => item.stock <= item.minimumStock).length > 0 ? (
+                {inventoryData.filter(item => item.stock <= item.minimumStock).length > 0 ? (
                   <div className="space-y-4">
-                    {mockInventoryItems
+                    {inventoryData
                       .filter(item => item.stock <= item.minimumStock)
                       .map(item => (
                         <div key={item.id} className="flex justify-between border-b pb-2">
@@ -405,13 +652,11 @@ const AdminInventoryPage = () => {
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories
-                      .filter(category => category !== 'all')
-                      .map(category => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
+                    {categoriasProdutos.map(category => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
