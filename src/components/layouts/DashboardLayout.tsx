@@ -96,21 +96,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       icon: <ClipboardCheck size={20} />, 
       label: 'Visitas', 
       isActive: pathname === `${baseRoute}/visits`,
-      roles: ['admin', 'manager', 'salesperson'] 
+      roles: ['manager', 'salesperson'] 
     },
     { 
       to: `${baseRoute}/schedule`, 
       icon: <Calendar size={20} />, 
       label: 'Agenda', 
       isActive: pathname === `${baseRoute}/schedule`,
-      roles: ['admin', 'manager', 'salesperson'] 
+      roles: ['manager', 'salesperson'] 
     },
     { 
       to: `${baseRoute}/prospects`, 
       icon: <Users size={20} />, 
       label: 'Prospecção', 
       isActive: pathname === `${baseRoute}/prospects`,
-      roles: ['admin', 'manager', 'salesperson'] 
+      roles: ['manager', 'salesperson'] 
     },
     { 
       to: `${baseRoute}/sales`, 
