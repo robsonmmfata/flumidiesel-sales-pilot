@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -116,8 +117,8 @@ const inventoryData = [
 
 const ManagerInventoryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   
   // Apply filters to inventory data
   const filteredInventory = inventoryData.filter(item => {
@@ -125,8 +126,8 @@ const ManagerInventoryPage = () => {
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.code.toLowerCase().includes(searchTerm.toLowerCase());
       
-    const matchesCategory = !categoryFilter || item.category === categoryFilter;
-    const matchesStatus = !statusFilter || item.status === statusFilter;
+    const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
+    const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
     
     return matchesSearch && matchesCategory && matchesStatus;
   });
@@ -236,7 +237,7 @@ const ManagerInventoryPage = () => {
                     <SelectValue placeholder="Categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas as categorias</SelectItem>
+                    <SelectItem value="all">Todas as categorias</SelectItem>
                     {categories.map(category => (
                       <SelectItem key={category} value={category}>{category}</SelectItem>
                     ))}
@@ -247,7 +248,7 @@ const ManagerInventoryPage = () => {
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos os status</SelectItem>
+                    <SelectItem value="all">Todos os status</SelectItem>
                     {statuses.map(status => (
                       <SelectItem key={status} value={status}>{status}</SelectItem>
                     ))}
