@@ -1,6 +1,27 @@
 
 import { User, UserRole } from '@/contexts/AuthContext';
 
+// Client Type
+export interface Client {
+  id: string;
+  name: string;
+  email: string;
+  address: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  number?: string;
+  phone: string;
+  cellphone?: string;
+  zipCode: string;
+  contactName?: string;
+  status: 'active' | 'inactive';
+  lastPurchase?: string; // ISO date string
+  totalPurchases?: number;
+  totalSpent?: number;
+}
+
 // Customer Visit
 export interface Visit {
   id: string;
