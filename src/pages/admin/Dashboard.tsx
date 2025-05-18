@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +19,7 @@ import {
   mockSales, 
   mockScheduledVisits, 
   mockUsers,
-  mockInventoryItems
+  mockInventory
 } from '@/data/mockData';
 import DashboardTimeFilter from '@/components/dashboard/DashboardTimeFilter';
 import {
@@ -30,6 +31,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import ClientHeatmap from '@/components/admin/ClientHeatmap';
 
 const AdminDashboard = () => {
   // Time filter state
@@ -47,11 +49,11 @@ const AdminDashboard = () => {
 
   // Calculate totals
   const totalSalesValue = mockSales.reduce((sum, sale) => sum + sale.totalValue, 0);
-  const totalInventoryValue = mockInventoryItems.reduce((sum, item) => sum + (item.price * item.stock), 0);
+  const totalInventoryValue = mockInventory.reduce((sum, item) => sum + (item.price * item.stock), 0);
   const totalUsers = mockUsers.length;
   
   // Calculate low stock items
-  const lowStockItems = mockInventoryItems.filter(item => item.stock <= item.minimumStock);
+  const lowStockItems = mockInventory.filter(item => item.stock <= item.minimumStock);
 
   // Filter data based on selected period
   const getFilteredData = () => {
@@ -180,7 +182,7 @@ const AdminDashboard = () => {
               </div>
               <div className="flex items-center justify-between mt-1">
                 <p className="text-xs text-muted-foreground">
-                  {mockInventoryItems.length} produtos diferentes
+                  {mockInventory.length} produtos diferentes
                 </p>
                 <Button 
                   variant="ghost" 
@@ -263,13 +265,8 @@ const AdminDashboard = () => {
             <CardHeader>
               <CardTitle>Distribuição Geográfica</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="flex h-[250px] items-center justify-center">
-                <div className="flex items-center space-x-2 text-muted-foreground">
-                  <MapPin className="h-12 w-12" />
-                  <div>Mapa de calor de clientes</div>
-                </div>
-              </div>
+            <CardContent className="p-0">
+              <ClientHeatmap />
             </CardContent>
           </Card>
         </div>
@@ -383,7 +380,7 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {mockInventoryItems.map((item) => (
+                    {mockInventory.map((item) => (
                       <tr key={item.id} className="border-b">
                         <td className="py-2">{item.name}</td>
                         <td className="py-2">{item.sku}</td>
@@ -468,9 +465,9 @@ const AdminDashboard = () => {
                   <tbody>
                     {filteredData.prospects.map((prospect) => (
                       <tr key={prospect.id} className="border-b">
-                        <td className="py-2">{prospect.name}</td>
-                        <td className="py-2">{prospect.company}</td>
-                        <td className="py-2">{prospect.city}</td>
+                        <td className="py-2">{prospect.name || prospect.clientName}</td>
+                        <td className="py-2">{prospect.company || 'N/A'}</td>
+                        <td className="py-2">{prospect.city || 'N/A'}</td>
                         <td className="py-2">
                           <span className={`px-2 py-1 rounded-full text-xs ${
                             prospect.interestLevel === 'high' ? 'bg-green-100 text-green-800' : 
@@ -481,7 +478,7 @@ const AdminDashboard = () => {
                              prospect.interestLevel === 'medium' ? 'Médio' : 'Baixo'}
                           </span>
                         </td>
-                        <td className="py-2">{prospect.salespersonName}</td>
+                        <td className="py-2">{prospect.salespersonName || 'N/A'}</td>
                         <td className="py-2">{format(new Date(prospect.createdAt), 'dd/MM/yyyy', { locale: ptBR })}</td>
                       </tr>
                     ))}
