@@ -1,13 +1,17 @@
 
 import React from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { mockSales, mockUsers } from '@/data/mockData';
+import { mockSales } from '@/data/mockData';
 import { Card, CardContent } from '@/components/ui/card';
 import { SalesTable } from '@/components/sales/SalesTable';
 import { SalesChart } from '@/components/sales/SalesChart';
 import { SalesByRegionChart } from '@/components/sales/SalesByRegionChart';
 import { SalesSummary } from '@/components/sales/SalesSummary';
 import { useAuth } from '@/contexts/AuthContext';
+import { SalesTrendCard } from '@/components/sales/SalesTrendCard';
+import { ClientHeatmapCard } from '@/components/sales/ClientHeatmapCard';
+import { LowStockItemsCard } from '@/components/sales/LowStockItemsCard';
+import { SalesPerformanceByPersonCard } from '@/components/sales/SalesPerformanceByPersonCard';
 
 const ManagerSalesPage = () => {
   const { user } = useAuth();
@@ -18,6 +22,14 @@ const ManagerSalesPage = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <h1 className="text-2xl font-bold">Vendas (Gerente)</h1>
+        
+        {/* Dashboard Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SalesTrendCard />
+          <ClientHeatmapCard />
+          <LowStockItemsCard />
+          <SalesPerformanceByPersonCard />
+        </div>
         
         <SalesSummary sales={mockSales} />
         
