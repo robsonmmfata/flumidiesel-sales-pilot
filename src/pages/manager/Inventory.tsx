@@ -21,98 +21,230 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 
-// Mock inventory data
+// Mock inventory data com base na imagem enviada pelo usuário
 const inventoryData = [
   { 
     id: 1, 
-    code: 'FLU-9001', 
-    name: 'Filtro de Combustível Diesel', 
-    category: 'Filtros', 
-    quantity: 156, 
-    unitPrice: 85.90, 
+    code: 'PNEU-001', 
+    name: '195/75R16C 107/105R TL AGILIS 3 MI', 
+    category: 'PNEU', 
+    quantity: 24, 
+    unitPrice: 750.00, 
     status: 'Em estoque'
   },
   { 
     id: 2, 
-    code: 'FLU-9002', 
-    name: 'Filtro de Ar Motor', 
-    category: 'Filtros', 
-    quantity: 89, 
-    unitPrice: 120.50, 
+    code: 'PNEU-002', 
+    name: '205/70 R 15C 106/104R TL AGILIS 3 MI', 
+    category: 'PNEU', 
+    quantity: 16, 
+    unitPrice: 680.00, 
     status: 'Em estoque'
   },
   { 
     id: 3, 
-    code: 'FLU-5001', 
-    name: 'Bico Injetor Eletrônico', 
-    category: 'Injetores', 
-    quantity: 45, 
-    unitPrice: 320.00, 
+    code: 'PNEU-003', 
+    name: '205/75 R16C 113/111R TL AGILIS 3A MI', 
+    category: 'PNEU', 
+    quantity: 20, 
+    unitPrice: 790.00, 
     status: 'Em estoque'
   },
   { 
     id: 4, 
-    code: 'FLU-5002', 
-    name: 'Bico Injetor Mecânico', 
-    category: 'Injetores', 
-    quantity: 18, 
-    unitPrice: 280.00, 
+    code: 'PNEU-004', 
+    name: '215/75 R 17.5 X INCITY XZU 3 TL 126/124 MI', 
+    category: 'PNEU', 
+    quantity: 12, 
+    unitPrice: 1250.00, 
     status: 'Estoque baixo'
   },
   { 
     id: 5, 
-    code: 'FLU-7001', 
-    name: 'Bomba de Combustível Elétrica', 
-    category: 'Bombas', 
-    quantity: 12, 
-    unitPrice: 450.00, 
+    code: 'PNEU-005', 
+    name: '215/75R17.5 S2250 TL 126/124M VM GO', 
+    category: 'PNEU', 
+    quantity: 10, 
+    unitPrice: 1180.00, 
     status: 'Estoque baixo'
   },
   { 
     id: 6, 
-    code: 'FLU-7002', 
-    name: 'Bomba de Combustível Mecânica', 
-    category: 'Bombas', 
+    code: 'PNEU-006', 
+    name: '215/75R17.5 RT TL 126/124M VU RO', 
+    category: 'PNEU', 
     quantity: 0, 
-    unitPrice: 380.00, 
+    unitPrice: 1150.00, 
     status: 'Sem estoque'
   },
   { 
     id: 7, 
-    code: 'FLU-3001', 
-    name: 'Óleo Lubrificante Motor 15W40', 
-    category: 'Lubrificantes', 
-    quantity: 210, 
-    unitPrice: 32.90, 
+    code: 'PNEU-007', 
+    name: '225/65R16C 112/110R TL AGILIS 3 DT MI', 
+    category: 'PNEU', 
+    quantity: 18, 
+    unitPrice: 720.00, 
     status: 'Em estoque'
   },
   { 
     id: 8, 
-    code: 'FLU-3002', 
-    name: 'Aditivo para Diesel', 
-    category: 'Lubrificantes', 
-    quantity: 85, 
-    unitPrice: 45.50, 
+    code: 'PNEU-008', 
+    name: '225/70 R 15C 112/110R TL AGILIS 3 MI', 
+    category: 'PNEU', 
+    quantity: 15, 
+    unitPrice: 690.00, 
     status: 'Em estoque'
   },
   { 
     id: 9, 
-    code: 'FLU-2001', 
-    name: 'Kit Manutenção Preventiva', 
-    category: 'Kits', 
-    quantity: 6, 
-    unitPrice: 690.00, 
+    code: 'PNEU-009', 
+    name: '225/75 R 16C 118/116R TL AGILIS 3 MI', 
+    category: 'PNEU', 
+    quantity: 8, 
+    unitPrice: 810.00, 
     status: 'Estoque baixo'
   },
   { 
     id: 10, 
-    code: 'FLU-2002', 
-    name: 'Kit Manutenção Completa', 
-    category: 'Kits', 
-    quantity: 3, 
-    unitPrice: 1250.00, 
+    code: 'PNEU-010', 
+    name: '235/75R17.5 XMZ TL 132/130M MI', 
+    category: 'PNEU', 
+    quantity: 6, 
+    unitPrice: 1320.00, 
     status: 'Estoque baixo'
   },
+  { 
+    id: 11, 
+    code: 'PNEU-011', 
+    name: '275/70R22.5 X MULTI D TL 152/148 VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 14, 
+    unitPrice: 1650.00, 
+    status: 'Em estoque'
+  },
+  { 
+    id: 12, 
+    code: 'PNEU-012', 
+    name: '275/80R22.5 ST250 TL 149/146L VG GO', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 12, 
+    unitPrice: 1580.00, 
+    status: 'Em estoque'
+  },
+  { 
+    id: 13, 
+    code: 'PNEU-013', 
+    name: '275/80R22.5 X INCITY Z TL 149/146 VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 10, 
+    unitPrice: 1620.00, 
+    status: 'Estoque baixo'
+  },
+  { 
+    id: 14, 
+    code: 'PNEU-014', 
+    name: '275/80R22.5 X MULTI Z TL 149/146L VM MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 5, 
+    unitPrice: 1640.00, 
+    status: 'Estoque baixo'
+  },
+  { 
+    id: 15, 
+    code: 'PNEU-015', 
+    name: '275/80R22.5 X MULTI Z TL 149/146L VM MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 3, 
+    unitPrice: 1640.00, 
+    status: 'Estoque baixo'
+  },
+  { 
+    id: 16, 
+    code: 'PNEU-016', 
+    name: '295/80R22.5 DR550 TL 152/148L VG GO', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 7, 
+    unitPrice: 1720.00, 
+    status: 'Estoque baixo'
+  },
+  { 
+    id: 17, 
+    code: 'PNEU-017', 
+    name: '295/80R22.5 X MULTI D TL 152/148L VG GO', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 0, 
+    unitPrice: 1750.00, 
+    status: 'Sem estoque'
+  },
+  { 
+    id: 18, 
+    code: 'PNEU-018', 
+    name: '295/80R22.5 X MULTI D2 TL 152/148L VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 9, 
+    unitPrice: 1780.00, 
+    status: 'Estoque baixo'
+  },
+  { 
+    id: 19, 
+    code: 'PNEU-019', 
+    name: '295/80R22.5 X MULTI T TL 152/148L VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 11, 
+    unitPrice: 1760.00, 
+    status: 'Em estoque'
+  },
+  { 
+    id: 20, 
+    code: 'PNEU-020', 
+    name: '295/80R22.5 X MULTI Z2 TL 154/150L VG MI', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 8, 
+    unitPrice: 1790.00, 
+    status: 'Estoque baixo'
+  },
+  { 
+    id: 21, 
+    code: 'PNEU-021', 
+    name: '295/80R22.5 X MULTIWAY XZE', 
+    category: 'PNEU RECAUCHUTADO', 
+    quantity: 6, 
+    unitPrice: 1850.00, 
+    status: 'Estoque baixo'
+  },
+  { 
+    id: 22, 
+    code: 'ACESS-001', 
+    name: 'JUEGO 5 - 11.00R20 XEZ', 
+    category: 'ACESSORIOS', 
+    quantity: 15, 
+    unitPrice: 90.00, 
+    status: 'Em estoque'
+  },
+  { 
+    id: 23, 
+    code: 'ACESS-002', 
+    name: 'SEAU 3,600 KG LUBRIFIANT R5085', 
+    category: 'ACESSORIOS', 
+    quantity: 20, 
+    unitPrice: 150.00, 
+    status: 'Em estoque'
+  },
+];
+
+// Lista de vendedores
+const vendedores = [
+  { id: 1, nome: 'BALCAO PEÇAS - ATACADO' },
+  { id: 2, nome: 'DAIANE ARANTES' },
+  { id: 3, nome: 'ESCRITÓRIO DE PEÇAS' },
+  { id: 4, nome: 'WAGNER COSTA BATISTA' }
+];
+
+// Lista de categorias de produtos
+const categoriasProdutos = [
+  'ACESSORIOS',
+  'PNEU',
+  'PNEU RECAUCHUTADO'
 ];
 
 const ManagerInventoryPage = () => {
@@ -144,11 +276,9 @@ const ManagerInventoryPage = () => {
 
   const getStockIcon = (category) => {
     switch (category) {
-      case 'Filtros': return <Filter className="h-5 w-5" />;
-      case 'Injetores': return <Settings className="h-5 w-5" />;
-      case 'Bombas': return <Package className="h-5 w-5" />;
-      case 'Lubrificantes': return <Droplet className="h-5 w-5" />;
-      case 'Kits': return <Wrench className="h-5 w-5" />;
+      case 'PNEU': return <Filter className="h-5 w-5" />;
+      case 'PNEU RECAUCHUTADO': return <Settings className="h-5 w-5" />;
+      case 'ACESSORIOS': return <Wrench className="h-5 w-5" />;
       default: return <Package className="h-5 w-5" />;
     }
   };
