@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -97,28 +96,28 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       icon: <ClipboardCheck size={20} />, 
       label: 'Visitas', 
       isActive: pathname === `${baseRoute}/visits`,
-      roles: ['salesperson'] // Removed 'manager' from roles
+      roles: ['salesperson'] 
     },
     { 
       to: `${baseRoute}/schedule`, 
       icon: <Calendar size={20} />, 
       label: 'Agenda', 
       isActive: pathname === `${baseRoute}/schedule`,
-      roles: ['salesperson'] // Removed 'manager' from roles
+      roles: ['salesperson'] 
     },
     { 
       to: `${baseRoute}/prospects`, 
       icon: <Users size={20} />, 
       label: 'Prospecção', 
       isActive: pathname === `${baseRoute}/prospects`,
-      roles: ['salesperson'] // Removed 'manager' from roles
+      roles: ['salesperson'] 
     },
     { 
       to: `${baseRoute}/sales`, 
       icon: <TrendingUp size={20} />, 
       label: 'Vendas', 
       isActive: pathname === `${baseRoute}/sales`,
-      roles: ['admin', 'manager', 'salesperson'] 
+      roles: ['admin', 'salesperson'] 
     },
     { 
       to: `${baseRoute}/inventory`, 

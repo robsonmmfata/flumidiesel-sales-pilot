@@ -21,7 +21,7 @@ import ManagerClientsPage from "./pages/manager/Clients";
 import ManagerVisitsPage from "./pages/manager/Visits";
 import ManagerSchedulePage from "./pages/manager/Schedule";
 import ManagerProspectsPage from "./pages/manager/Prospects";
-import ManagerSalesPage from "./pages/manager/Sales";
+// Removed import for ManagerSalesPage
 import ManagerInventoryPage from "./pages/manager/Inventory";
 import ManagerPromotionsPage from "./pages/manager/Promotions";
 
@@ -67,7 +67,7 @@ const App = () => (
               <Route path="/manager/visits" element={<ManagerVisitsPage />} />
               <Route path="/manager/schedule" element={<ManagerSchedulePage />} />
               <Route path="/manager/prospects" element={<ManagerProspectsPage />} />
-              <Route path="/manager/sales" element={<ManagerSalesPage />} />
+              {/* Removed manager sales route */}
               <Route path="/manager/inventory" element={<ManagerInventoryPage />} />
               <Route path="/manager/promotions" element={<ManagerPromotionsPage />} />
             </Route>
