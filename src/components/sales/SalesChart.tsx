@@ -23,24 +23,28 @@ interface SalesChartProps {
   title: string;
 }
 
-// Group sales by salesperson or any other criteria
+// Group sales by salesperson
 export const SalesChart: React.FC<SalesChartProps> = ({ sales, title }) => {
-  const salesByPerson = sales.reduce((acc: Record<string, number>, sale) => {
-    // Since we don't have salesperson name in the data directly, use salesPersonId
+  const salesByPerson = sales.reduce((acc: Record<string, { total: number, name: string }>, sale) => {
+    // Use salesPersonId as key
     const salesPersonId = sale.salesPersonId;
+    const salesPersonName = sale.salesPersonName || `Vendedor ${salesPersonId}`;
     
     if (!acc[salesPersonId]) {
-      acc[salesPersonId] = 0;
+      acc[salesPersonId] = { 
+        total: 0,
+        name: salesPersonName
+      };
     }
     
-    acc[salesPersonId] += sale.totalValue;
+    acc[salesPersonId].total += sale.totalValue;
     return acc;
   }, {});
   
   // Transform to chart data format
-  const chartData = Object.entries(salesByPerson).map(([id, value], index) => ({
-    name: `Vendedor ${index + 1}`,
-    value: value,
+  const chartData = Object.entries(salesByPerson).map(([id, data]) => ({
+    name: data.name,
+    value: data.total,
     salesPersonId: id
   }));
 

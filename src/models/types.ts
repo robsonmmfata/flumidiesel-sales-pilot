@@ -1,4 +1,3 @@
-
 import { User, UserRole } from '@/contexts/AuthContext';
 
 // Client Type
@@ -73,6 +72,7 @@ export interface Sale {
   deliveryDate: string; // ISO date string
   orderNumber: string;
   salesPersonId: string;
+  salesPersonName?: string;
   createdAt: string; // ISO date string
 }
 
