@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -12,24 +12,125 @@ import {
 } from 'lucide-react';
 import { mockVisits, mockProspects, mockSales, mockScheduledVisits, mockUsers } from '@/data/mockData';
 import { useAuth } from '@/contexts/AuthContext';
+import DashboardTimeFilter from '@/components/dashboard/DashboardTimeFilter';
+import { subDays, startOfMonth, endOfMonth, isWithinInterval, parseISO, startOfDay, endOfDay } from 'date-fns';
 
 const ManagerDashboard = () => {
   const { user } = useAuth();
   
+  // State for time filter
+  const [period, setPeriod] = useState('month');
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined,
+  });
+
+  // Calculate date range based on selected period
+  const getFilteredDateRange = () => {
+    const today = new Date();
+    
+    switch (period) {
+      case 'today':
+        return { 
+          from: startOfDay(today), 
+          to: endOfDay(today) 
+        };
+      case 'yesterday':
+        const yesterday = subDays(today, 1);
+        return { 
+          from: startOfDay(yesterday), 
+          to: endOfDay(yesterday) 
+        };
+      case 'week':
+        return { 
+          from: subDays(today, 7), 
+          to: today 
+        };
+      case 'month':
+        return { 
+          from: startOfMonth(today), 
+          to: today 
+        };
+      case 'lastmonth':
+        const firstDayLastMonth = startOfMonth(subDays(startOfMonth(today), 1));
+        const lastDayLastMonth = endOfMonth(firstDayLastMonth);
+        return { 
+          from: firstDayLastMonth, 
+          to: lastDayLastMonth 
+        };
+      case 'custom':
+        return dateRange;
+      default:
+        return { from: undefined, to: undefined };
+    }
+  };
+
+  const currentDateRange = getFilteredDateRange();
+  
+  // Filter data based on the selected date range
+  const filteredVisits = mockVisits.filter(visit => {
+    if (!currentDateRange.from && !currentDateRange.to) return true;
+    
+    const visitDate = parseISO(visit.date);
+    return (
+      (!currentDateRange.from || visitDate >= currentDateRange.from) &&
+      (!currentDateRange.to || visitDate <= currentDateRange.to)
+    );
+  });
+
+  const filteredSales = mockSales.filter(sale => {
+    if (!currentDateRange.from && !currentDateRange.to) return true;
+    
+    const saleDate = parseISO(sale.createdAt);
+    return (
+      (!currentDateRange.from || saleDate >= currentDateRange.from) &&
+      (!currentDateRange.to || saleDate <= currentDateRange.to)
+    );
+  });
+
+  const filteredProspects = mockProspects.filter(prospect => {
+    if (!currentDateRange.from && !currentDateRange.to) return true;
+    
+    const prospectDate = parseISO(prospect.createdAt);
+    return (
+      (!currentDateRange.from || prospectDate >= currentDateRange.from) &&
+      (!currentDateRange.to || prospectDate <= currentDateRange.to)
+    );
+  });
+
+  const filteredScheduledVisits = mockScheduledVisits.filter(visit => {
+    if (!currentDateRange.from && !currentDateRange.to) return visit.completed === false;
+    
+    const visitDate = parseISO(visit.date);
+    return (
+      visit.completed === false &&
+      (!currentDateRange.from || visitDate >= currentDateRange.from) &&
+      (!currentDateRange.to || visitDate <= currentDateRange.to)
+    );
+  });
+  
   // Filter for salespeople that manager manages (for a real app, this would filter by region or team)
   const salespeople = mockUsers.filter(u => u.role === 'salesperson');
   
-  // Calculate totals
-  const totalVisits = mockVisits.length;
-  const totalProspects = mockProspects.length;
-  const totalSales = mockSales.length;
-  const totalSalesValue = mockSales.reduce((sum, sale) => sum + sale.totalValue, 0);
-  const scheduledVisits = mockScheduledVisits.filter(v => !v.completed).length;
+  // Calculate totals based on filtered data
+  const totalVisits = filteredVisits.length;
+  const totalProspects = filteredProspects.length;
+  const totalSales = filteredSales.length;
+  const totalSalesValue = filteredSales.reduce((sum, sale) => sum + sale.totalValue, 0);
+  const scheduledVisits = filteredScheduledVisits.length;
   
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Dashboard do Gerente</h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <h1 className="text-2xl font-bold">Dashboard do Gerente</h1>
+          <DashboardTimeFilter 
+            period={period} 
+            onPeriodChange={setPeriod} 
+            dateRange={dateRange}
+            onDateRangeChange={setDateRange}
+          />
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
@@ -55,7 +156,7 @@ const ManagerDashboard = () => {
             <CardContent>
               <div className="text-2xl font-bold">{totalVisits}</div>
               <p className="text-xs text-muted-foreground">
-                Este mês
+                {period === 'month' ? 'Este mês' : 'No período selecionado'}
               </p>
             </CardContent>
           </Card>
@@ -68,7 +169,7 @@ const ManagerDashboard = () => {
             <CardContent>
               <div className="text-2xl font-bold">{totalProspects}</div>
               <p className="text-xs text-muted-foreground">
-                {mockProspects.filter(p => p.requestedQuote).length} com orçamentos
+                {filteredProspects.filter(p => p.requestedQuote).length} com orçamentos
               </p>
             </CardContent>
           </Card>
@@ -95,8 +196,8 @@ const ManagerDashboard = () => {
             <CardContent>
               <div className="space-y-4">
                 {salespeople.map(salesperson => {
-                  const salesCount = mockSales.filter(s => s.salesPersonId === salesperson.id).length;
-                  const salesValue = mockSales
+                  const salesCount = filteredSales.filter(s => s.salesPersonId === salesperson.id).length;
+                  const salesValue = filteredSales
                     .filter(s => s.salesPersonId === salesperson.id)
                     .reduce((sum, sale) => sum + sale.totalValue, 0);
                   
@@ -139,10 +240,9 @@ const ManagerDashboard = () => {
               <CardTitle>Próximas Visitas da Equipe</CardTitle>
             </CardHeader>
             <CardContent>
-              {mockScheduledVisits.filter(v => !v.completed).length > 0 ? (
+              {filteredScheduledVisits.length > 0 ? (
                 <div className="space-y-4">
-                  {mockScheduledVisits
-                    .filter(v => !v.completed)
+                  {filteredScheduledVisits
                     .slice(0, 5)
                     .map(visit => {
                       const salesperson = mockUsers.find(u => u.id === visit.salesPersonId);
@@ -161,7 +261,7 @@ const ManagerDashboard = () => {
                     })}
                 </div>
               ) : (
-                <p className="text-muted-foreground text-sm">Não há visitas agendadas</p>
+                <p className="text-muted-foreground text-sm">Não há visitas agendadas para este período</p>
               )}
             </CardContent>
           </Card>
