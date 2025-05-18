@@ -151,7 +151,9 @@ const ClientHeatmap: React.FC = () => {
         map.current.getCanvas().style.cursor = 'pointer';
         
         const feature = e.features[0];
-        const coordinates = feature.geometry.coordinates.slice() as [number, number];
+        // Type assertion to specify the geometry type
+        const pointGeometry = feature.geometry as GeoJSON.Point;
+        const coordinates = pointGeometry.coordinates.slice() as [number, number];
         const name = feature.properties?.name || '';
         const sales = feature.properties?.sales || 0;
         
