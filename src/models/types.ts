@@ -1,5 +1,5 @@
 
-import { User, UserRole } from '@/contexts/AuthContext';
+import { User as AuthUser, UserRole } from '@/contexts/AuthContext';
 
 // Client Type
 export interface Client {
@@ -59,6 +59,7 @@ export interface Prospect {
   requestedFollowUp: boolean;
   notes: string;
   salesPersonId: string;
+  salespersonName?: string; // Added salespersonName property
   createdAt: string; // ISO date string
 }
 
@@ -75,9 +76,11 @@ export interface Sale {
   totalValue: number;
   paymentMethod: 'cash' | 'credit' | 'debit' | 'transfer' | 'invoice';
   deliveryDate: string; // ISO date string
+  date: string; // Added date property
   orderNumber: string;
   salesPersonId: string;
   salesPersonName?: string;
+  status?: 'completed' | 'pending' | 'cancelled'; // Added status property
   createdAt: string; // ISO date string
 }
 
@@ -134,4 +137,9 @@ export interface Notification {
   read: boolean;
   userId: string;
   createdAt: string; // ISO date string
+}
+
+// Add User interface
+export interface User extends AuthUser {
+  active: boolean; // Added active property
 }
