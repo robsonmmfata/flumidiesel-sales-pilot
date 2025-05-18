@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -247,38 +246,6 @@ const ManagerDashboard = () => {
                   <Eye className="h-3 w-3 mr-1" />
                   Ver Detalhes
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Desempenho da Equipe</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {salespeople.map(salesperson => {
-                  const salesCount = filteredSales.filter(s => s.salesPersonId === salesperson.id).length;
-                  const salesValue = filteredSales
-                    .filter(s => s.salesPersonId === salesperson.id)
-                    .reduce((sum, sale) => sum + sale.totalValue, 0);
-                  
-                  return (
-                    <div key={salesperson.id} className="flex justify-between border-b pb-2">
-                      <div>
-                        <p className="font-medium">{salesperson.name}</p>
-                        <p className="text-sm text-muted-foreground">{salesCount} vendas</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">
-                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(salesValue)}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
               </div>
             </CardContent>
           </Card>

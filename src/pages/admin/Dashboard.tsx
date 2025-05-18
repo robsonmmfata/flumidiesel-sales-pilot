@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,9 +7,6 @@ import {
   ClipboardCheck,
   Calendar,
   Package,
-  BarChart,
-  LineChart,
-  MapPin,
   Eye
 } from 'lucide-react';
 import { 
@@ -31,7 +27,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import ClientHeatmap from '@/components/admin/ClientHeatmap';
 
 const AdminDashboard = () => {
   // Time filter state
@@ -246,32 +241,7 @@ const AdminDashboard = () => {
           </Card>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Desempenho de Vendas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex h-[250px] items-center justify-center">
-                <div className="flex items-center space-x-2 text-muted-foreground">
-                  <LineChart className="h-12 w-12" />
-                  <div>Gráfico de tendência de vendas</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Distribuição Geográfica</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ClientHeatmap />
-            </CardContent>
-          </Card>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Itens com Estoque Baixo</CardTitle>
@@ -297,20 +267,6 @@ const AdminDashboard = () => {
               ) : (
                 <p className="text-muted-foreground text-sm">Não há itens com estoque baixo</p>
               )}
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Desempenho por Vendedor</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex h-[250px] items-center justify-center">
-                <div className="flex items-center space-x-2 text-muted-foreground">
-                  <BarChart className="h-12 w-12" />
-                  <div>Gráfico de vendas por vendedor</div>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>
