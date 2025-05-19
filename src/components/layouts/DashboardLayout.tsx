@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -25,22 +26,40 @@ interface SidebarLinkProps {
   label: string;
   isCollapsed: boolean;
   isActive: boolean;
+  onMobileItemClick: () => void;
 }
 
-const SidebarLink: React.FC<SidebarLinkProps> = ({ to, icon, label, isCollapsed, isActive }) => (
-  <Link
-    to={to}
-    className={cn(
-      'flex items-center p-2 rounded-md transition-all',
-      isActive
-        ? 'bg-flumi-500 text-white'
-        : 'text-gray-700 hover:bg-flumi-100'
-    )}
-  >
-    <div className="mr-3">{icon}</div>
-    {!isCollapsed && <span>{label}</span>}
-  </Link>
-);
+const SidebarLink: React.FC<SidebarLinkProps> = ({ 
+  to, 
+  icon, 
+  label, 
+  isCollapsed, 
+  isActive,
+  onMobileItemClick 
+}) => {
+  const handleClick = (e: React.MouseEvent) => {
+    // Check if we're on mobile before collapsing
+    if (window.innerWidth < 768) {
+      onMobileItemClick();
+    }
+  };
+
+  return (
+    <Link
+      to={to}
+      className={cn(
+        'flex items-center p-2 rounded-md transition-all',
+        isActive
+          ? 'bg-flumi-500 text-white'
+          : 'text-gray-700 hover:bg-flumi-100'
+      )}
+      onClick={handleClick}
+    >
+      <div className="mr-3">{icon}</div>
+      {!isCollapsed && <span>{label}</span>}
+    </Link>
+  );
+};
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -64,6 +83,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const handleLogout = () => {
     logout();
     toast.success("Sessão encerrada com sucesso");
+  };
+
+  const collapseMobileSidebar = () => {
+    // Only collapse if we're on mobile
+    if (window.innerWidth < 768) {
+      setIsSidebarCollapsed(true);
+    }
   };
 
   const baseRoute = isAdmin ? '/admin' : isManager ? '/manager' : '/salesperson';
@@ -168,6 +194,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               label={link.label}
               isCollapsed={isSidebarCollapsed}
               isActive={link.isActive}
+              onMobileItemClick={collapseMobileSidebar}
             />
           ))}
           
