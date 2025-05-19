@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
@@ -9,9 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { mockSales, mockInventory } from '@/data/mockData';
-import { PlusCircle, FileText, User, Building, Calendar, DollarSign, Package, Truck, CreditCard } from 'lucide-react';
+import { PlusCircle, FileText, Calendar, DollarSign, Package, Truck, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
 import { Sale } from '@/models/types';
+import DashboardTimeFilter from '@/components/dashboard/DashboardTimeFilter';
 
 interface SaleProduct {
   productId: string;
@@ -41,6 +41,11 @@ const SalespersonSalesPage = () => {
   const [sales, setSales] = useState<Sale[]>(mockSales);
   const [formData, setFormData] = useState<SaleFormData>(initialFormData);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined
+  });
+  const [period, setPeriod] = useState<string>('all');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -121,8 +126,49 @@ const SalespersonSalesPage = () => {
     toast.success('Venda registrada com sucesso!');
   };
 
-  // Filter sales for current user
-  const userSales = sales.filter(sale => sale.salesPersonId === user?.id);
+  // Filter data based on selected period or date range
+  const filterByDate = (date: string) => {
+    const itemDate = new Date(date);
+    
+    if (period !== 'all' && period !== 'custom') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (period === 'today') {
+        return itemDate >= today;
+      } else if (period === 'yesterday') {
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        return itemDate >= yesterday && itemDate < today;
+      } else if (period === 'week') {
+        const weekAgo = new Date(today);
+        weekAgo.setDate(today.getDate() - 7);
+        return itemDate >= weekAgo;
+      } else if (period === 'month') {
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        return itemDate >= monthStart;
+      } else if (period === 'lastmonth') {
+        const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        return itemDate >= lastMonthStart && itemDate < thisMonthStart;
+      }
+    } else if (dateRange.from || dateRange.to) {
+      if (dateRange.from && dateRange.to) {
+        return itemDate >= dateRange.from && itemDate <= dateRange.to;
+      } else if (dateRange.from) {
+        return itemDate >= dateRange.from;
+      } else if (dateRange.to) {
+        return itemDate <= dateRange.to;
+      }
+    }
+    
+    return true;
+  };
+
+  // Filter sales for current user and apply time filters
+  const userSales = sales
+    .filter(sale => sale.salesPersonId === user?.id)
+    .filter(sale => filterByDate(sale.createdAt));
   
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -145,156 +191,165 @@ const SalespersonSalesPage = () => {
   return (
     <DashboardLayout>
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-2xl font-bold">Registro de Vendas</h1>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Nova Venda
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Registrar Nova Venda</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="clientName">Nome do Cliente/Empresa</Label>
-                    <Input
-                      id="clientName"
-                      name="clientName"
-                      value={formData.clientName}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <Label>Produtos</Label>
-                      <Button type="button" variant="outline" size="sm" onClick={addProductRow}>
-                        <PlusCircle className="h-4 w-4 mr-1" /> Adicionar Produto
-                      </Button>
-                    </div>
-                    {formData.products.map((product, index) => (
-                      <div key={index} className="grid grid-cols-12 gap-2 items-center">
-                        <div className="col-span-4">
-                          <Select 
-                            value={product.productId}
-                            onValueChange={(value) => handleProductChange(index, 'productId', value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione um produto" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {mockInventory.map((item) => (
-                                <SelectItem key={item.id} value={item.id}>
-                                  {item.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="col-span-2">
-                          <Input
-                            type="number"
-                            min="1"
-                            value={product.quantity}
-                            onChange={(e) => handleProductChange(index, 'quantity', parseInt(e.target.value, 10) || 1)}
-                            placeholder="Qtd."
-                          />
-                        </div>
-                        <div className="col-span-3">
-                          <Input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={product.unitPrice}
-                            onChange={(e) => handleProductChange(index, 'unitPrice', parseFloat(e.target.value) || 0)}
-                            placeholder="Valor unit."
-                          />
-                        </div>
-                        <div className="col-span-2">
-                          <p className="text-right font-medium">
-                            {formatCurrency(product.quantity * product.unitPrice)}
-                          </p>
-                        </div>
-                        <div className="col-span-1">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="text-gray-500 hover:text-red-500"
-                            onClick={() => removeProductRow(index)}
-                            disabled={formData.products.length <= 1}
-                          >
-                            &times;
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                    <div className="flex justify-end">
-                      <p className="font-bold">Total: {formatCurrency(calculateTotal())}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-wrap gap-2">
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Nova Venda
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Registrar Nova Venda</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+                  <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="paymentMethod">Forma de Pagamento</Label>
-                      <Select 
-                        value={formData.paymentMethod}
-                        onValueChange={(value) => handleSelectChange(value, 'paymentMethod')}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="cash">Dinheiro</SelectItem>
-                          <SelectItem value="credit">Cartão de Crédito</SelectItem>
-                          <SelectItem value="debit">Cartão de Débito</SelectItem>
-                          <SelectItem value="transfer">Transferência</SelectItem>
-                          <SelectItem value="invoice">Boleto</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="deliveryDate">Data de Entrega</Label>
+                      <Label htmlFor="clientName">Nome do Cliente/Empresa</Label>
                       <Input
-                        id="deliveryDate"
-                        name="deliveryDate"
-                        type="date"
-                        value={formData.deliveryDate}
+                        id="clientName"
+                        name="clientName"
+                        value={formData.clientName}
                         onChange={handleInputChange}
                         required
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="orderNumber">Número do Pedido (Opcional)</Label>
-                      <Input
-                        id="orderNumber"
-                        name="orderNumber"
-                        value={formData.orderNumber}
-                        onChange={handleInputChange}
-                        placeholder="Gerado automaticamente se não informado"
-                      />
+                      <div className="flex justify-between items-center">
+                        <Label>Produtos</Label>
+                        <Button type="button" variant="outline" size="sm" onClick={addProductRow}>
+                          <PlusCircle className="h-4 w-4 mr-1" /> Adicionar Produto
+                        </Button>
+                      </div>
+                      {formData.products.map((product, index) => (
+                        <div key={index} className="grid grid-cols-12 gap-2 items-center">
+                          <div className="col-span-4">
+                            <Select 
+                              value={product.productId}
+                              onValueChange={(value) => handleProductChange(index, 'productId', value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione um produto" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {mockInventory.map((item) => (
+                                  <SelectItem key={item.id} value={item.id}>
+                                    {item.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="col-span-2">
+                            <Input
+                              type="number"
+                              min="1"
+                              value={product.quantity}
+                              onChange={(e) => handleProductChange(index, 'quantity', parseInt(e.target.value, 10) || 1)}
+                              placeholder="Qtd."
+                            />
+                          </div>
+                          <div className="col-span-3">
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={product.unitPrice}
+                              onChange={(e) => handleProductChange(index, 'unitPrice', parseFloat(e.target.value) || 0)}
+                              placeholder="Valor unit."
+                            />
+                          </div>
+                          <div className="col-span-2">
+                            <p className="text-right font-medium">
+                              {formatCurrency(product.quantity * product.unitPrice)}
+                            </p>
+                          </div>
+                          <div className="col-span-1">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="text-gray-500 hover:text-red-500"
+                              onClick={() => removeProductRow(index)}
+                              disabled={formData.products.length <= 1}
+                            >
+                              &times;
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex justify-end">
+                        <p className="font-bold">Total: {formatCurrency(calculateTotal())}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="paymentMethod">Forma de Pagamento</Label>
+                        <Select 
+                          value={formData.paymentMethod}
+                          onValueChange={(value) => handleSelectChange(value, 'paymentMethod')}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="cash">Dinheiro</SelectItem>
+                            <SelectItem value="credit">Cartão de Crédito</SelectItem>
+                            <SelectItem value="debit">Cartão de Débito</SelectItem>
+                            <SelectItem value="transfer">Transferência</SelectItem>
+                            <SelectItem value="invoice">Boleto</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="deliveryDate">Data de Entrega</Label>
+                        <Input
+                          id="deliveryDate"
+                          name="deliveryDate"
+                          type="date"
+                          value={formData.deliveryDate}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="orderNumber">Número do Pedido (Opcional)</Label>
+                        <Input
+                          id="orderNumber"
+                          name="orderNumber"
+                          value={formData.orderNumber}
+                          onChange={handleInputChange}
+                          placeholder="Gerado automaticamente se não informado"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="flex justify-end space-x-2">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Cancelar
-                  </Button>
-                  <Button type="submit">Registrar Venda</Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  
+                  <div className="flex justify-end space-x-2">
+                    <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                      Cancelar
+                    </Button>
+                    <Button type="submit">Registrar Venda</Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
+
+        <DashboardTimeFilter
+          dateRange={dateRange}
+          onDateRangeChange={setDateRange}
+          period={period}
+          onPeriodChange={setPeriod}
+        />
 
         {userSales.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
