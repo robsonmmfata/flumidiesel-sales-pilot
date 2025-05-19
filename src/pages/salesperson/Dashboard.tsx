@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,9 +10,15 @@ import {
   Calendar,
 } from 'lucide-react';
 import { mockVisits, mockProspects, mockSales, mockScheduledVisits } from '@/data/mockData';
+import DashboardTimeFilter from '@/components/dashboard/DashboardTimeFilter';
 
 const SalespersonDashboard = () => {
   const { user } = useAuth();
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined
+  });
+  const [period, setPeriod] = useState<string>('all');
 
   // Filter data for the current salesperson
   const userVisits = mockVisits.filter(
@@ -27,9 +33,54 @@ const SalespersonDashboard = () => {
   const userScheduledVisits = mockScheduledVisits.filter(
     (visit) => visit.salesPersonId === user?.id
   );
+  
+  // Filter based on selected period or date range
+  const filterByDate = (date: string) => {
+    const itemDate = new Date(date);
+    
+    if (period !== 'all' && period !== 'custom') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (period === 'today') {
+        return itemDate >= today;
+      } else if (period === 'yesterday') {
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        return itemDate >= yesterday && itemDate < today;
+      } else if (period === 'week') {
+        const weekAgo = new Date(today);
+        weekAgo.setDate(today.getDate() - 7);
+        return itemDate >= weekAgo;
+      } else if (period === 'month') {
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        return itemDate >= monthStart;
+      } else if (period === 'lastmonth') {
+        const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        return itemDate >= lastMonthStart && itemDate < thisMonthStart;
+      }
+    } else if (dateRange.from || dateRange.to) {
+      if (dateRange.from && dateRange.to) {
+        return itemDate >= dateRange.from && itemDate <= dateRange.to;
+      } else if (dateRange.from) {
+        return itemDate >= dateRange.from;
+      } else if (dateRange.to) {
+        return itemDate <= dateRange.to;
+      }
+    }
+    
+    return true;
+  };
+  
+  // Apply filters to the data
+  const filteredSales = userSales.filter(sale => filterByDate(sale.createdAt));
+  const filteredVisits = userVisits.filter(visit => filterByDate(visit.date));
+  const filteredProspects = userProspects.filter(prospect => filterByDate(prospect.createdAt));
+  const filteredScheduledVisits = userScheduledVisits.filter(visit => filterByDate(visit.date));
 
   // Calculate total sales value
-  const totalSalesValue = userSales.reduce(
+  const totalSalesValue = filteredSales.reduce(
     (total, sale) => total + sale.totalValue,
     0
   );
@@ -38,6 +89,13 @@ const SalespersonDashboard = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <h1 className="text-2xl font-bold">Dashboard do Vendedor</h1>
+        
+        <DashboardTimeFilter
+          dateRange={dateRange}
+          onDateRangeChange={setDateRange}
+          period={period}
+          onPeriodChange={setPeriod}
+        />
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
@@ -50,7 +108,7 @@ const SalespersonDashboard = () => {
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalSalesValue)}
               </div>
               <p className="text-xs text-muted-foreground">
-                {userSales.length} pedidos
+                {filteredSales.length} pedidos
               </p>
             </CardContent>
           </Card>
@@ -61,9 +119,9 @@ const SalespersonDashboard = () => {
               <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{userVisits.length}</div>
+              <div className="text-2xl font-bold">{filteredVisits.length}</div>
               <p className="text-xs text-muted-foreground">
-                Este mês
+                {period === 'month' ? 'Este mês' : 'No período'}
               </p>
             </CardContent>
           </Card>
@@ -74,9 +132,9 @@ const SalespersonDashboard = () => {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{userProspects.length}</div>
+              <div className="text-2xl font-bold">{filteredProspects.length}</div>
               <p className="text-xs text-muted-foreground">
-                {userProspects.filter((p) => p.requestedQuote).length} com orçamentos
+                {filteredProspects.filter((p) => p.requestedQuote).length} com orçamentos
               </p>
             </CardContent>
           </Card>
@@ -88,7 +146,7 @@ const SalespersonDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {userScheduledVisits.filter((v) => !v.completed).length}
+                {filteredScheduledVisits.filter((v) => !v.completed).length}
               </div>
               <p className="text-xs text-muted-foreground">
                 Pendentes
@@ -103,9 +161,9 @@ const SalespersonDashboard = () => {
               <CardTitle>Próximas Visitas</CardTitle>
             </CardHeader>
             <CardContent>
-              {userScheduledVisits.filter((v) => !v.completed).length > 0 ? (
+              {filteredScheduledVisits.filter((v) => !v.completed).length > 0 ? (
                 <div className="space-y-4">
-                  {userScheduledVisits
+                  {filteredScheduledVisits
                     .filter((v) => !v.completed)
                     .slice(0, 5)
                     .map((visit) => (
@@ -129,9 +187,9 @@ const SalespersonDashboard = () => {
               <CardTitle>Últimas Vendas</CardTitle>
             </CardHeader>
             <CardContent>
-              {userSales.length > 0 ? (
+              {filteredSales.length > 0 ? (
                 <div className="space-y-4">
-                  {userSales.slice(0, 5).map((sale) => (
+                  {filteredSales.slice(0, 5).map((sale) => (
                     <div key={sale.id} className="flex justify-between border-b pb-2">
                       <div>
                         <p className="font-medium">{sale.clientName}</p>
