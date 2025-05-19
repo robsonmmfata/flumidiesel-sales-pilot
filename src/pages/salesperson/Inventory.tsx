@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Tag, Package, AlertCircle, Check } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Lista de produtos atualizada
 const inventoryData = [
@@ -252,6 +253,7 @@ const categoriasProdutos = [
 const SalespersonInventoryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const isMobile = useIsMobile();
 
   // Extract unique categories from inventory items
   const categories = ['all', ...Array.from(new Set(inventoryData.map(item => item.category)))];
@@ -302,21 +304,21 @@ const SalespersonInventoryPage = () => {
     <DashboardLayout>
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Consulta de Estoque</h1>
+          <h1 className="text-xl md:text-2xl font-bold">Consulta de Estoque</h1>
         </div>
 
-        {/* Search and Filter Controls */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
+        {/* Search and Filter Controls - Stacked on mobile */}
+        <div className="flex flex-col gap-4">
+          <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <Input
               className="pl-10"
-              placeholder="Buscar produtos por nome, descrição ou SKU..."
+              placeholder={isMobile ? "Buscar produtos..." : "Buscar produtos por nome, descrição ou SKU..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="w-full sm:w-64">
+          <div className="w-full">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="Filtrar por categoria" />
@@ -332,30 +334,30 @@ const SalespersonInventoryPage = () => {
           </div>
         </div>
 
-        {/* Inventory Items Grid */}
+        {/* Inventory Items Grid - Adjusted column count for different screen sizes */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => (
-              <Card key={item.id} className="overflow-hidden">
-                <CardHeader className="p-4 pb-2 bg-gray-50">
+              <Card key={item.id} className="overflow-hidden h-full">
+                <CardHeader className="p-3 pb-2 bg-gray-50">
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg">{item.name}</CardTitle>
+                    <CardTitle className="text-sm sm:text-base md:text-lg">{item.name}</CardTitle>
                     {getStockLevelBadge(item.stock, item.minimumStock)}
                   </div>
-                  <p className="text-sm text-gray-500">SKU: {item.sku}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">SKU: {item.sku}</p>
                 </CardHeader>
-                <CardContent className="p-4 pt-3 space-y-2">
-                  <div className="text-sm">{item.description}</div>
+                <CardContent className="p-3 space-y-2">
+                  <div className="text-xs sm:text-sm">{item.description}</div>
                   
                   <div className="flex justify-between items-center pt-2">
-                    <Badge variant="outline" className="bg-gray-100">
+                    <Badge variant="outline" className="bg-gray-100 text-xs">
                       <Tag className="h-3 w-3 mr-1" /> {item.category}
                     </Badge>
-                    <p className="font-medium text-lg">{formatCurrency(item.price)}</p>
+                    <p className="font-medium text-sm md:text-lg">{formatCurrency(item.price)}</p>
                   </div>
                   
                   <div className="pt-2">
-                    <div className="flex justify-between items-center text-sm">
+                    <div className="flex justify-between items-center text-xs sm:text-sm">
                       <span>Quantidade disponível:</span>
                       <span className="font-medium">{item.stock} unidades</span>
                     </div>
@@ -366,9 +368,9 @@ const SalespersonInventoryPage = () => {
           ) : (
             <Card className="col-span-full">
               <CardContent className="py-8 text-center">
-                <Package className="h-12 w-12 mx-auto text-gray-400" />
-                <p className="mt-2 font-medium">Nenhum produto encontrado</p>
-                <p className="text-sm text-gray-500">
+                <Package className="h-8 w-8 sm:h-12 sm:w-12 mx-auto text-gray-400" />
+                <p className="mt-2 font-medium text-sm sm:text-base">Nenhum produto encontrado</p>
+                <p className="text-xs sm:text-sm text-gray-500">
                   Tente ajustar seus filtros ou termos de busca.
                 </p>
               </CardContent>
