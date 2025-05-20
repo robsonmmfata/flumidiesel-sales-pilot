@@ -36,11 +36,9 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
   isActive,
   onMobileItemClick 
 }) => {
-  const handleClick = (e: React.MouseEvent) => {
-    // Check if we're on mobile before collapsing
-    if (window.innerWidth < 768) {
-      onMobileItemClick();
-    }
+  const handleClick = () => {
+    // Always collapse the sidebar on mobile when a link is clicked
+    onMobileItemClick();
   };
 
   return (
@@ -85,7 +83,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   const collapseMobileSidebar = () => {
-    // Only collapse if we're on mobile
+    // Determine if we're on mobile using window width
     if (window.innerWidth < 768) {
       setIsSidebarCollapsed(true);
     }
