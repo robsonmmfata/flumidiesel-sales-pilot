@@ -9,7 +9,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
       <div className="text-center mb-10">
-        <h1 className="text-5xl font-bold mb-6">Flume Diesel</h1>
+        <h1 className="text-5xl font-bold mb-6">Flumidiesel</h1>
         <p className="text-xl text-gray-400">Sistema de gestão de vendas</p>
       </div>
       

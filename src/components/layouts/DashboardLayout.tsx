@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -173,7 +172,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <div className="flex justify-between items-center h-16 px-4 border-b border-gray-800">
           {!isSidebarCollapsed && (
             <div className="font-bold text-xl text-white">
-              Flume Diesel
+              Flumidiesel
             </div>
           )}
           <Button 

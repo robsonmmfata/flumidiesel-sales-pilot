@@ -30,7 +30,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="bg-black border border-gray-800 p-8 rounded-lg shadow-md w-96">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-white">Flume Diesel</h1>
+          <h1 className="text-3xl font-bold text-white">Flumidiesel</h1>
           <p className="text-gray-400 mt-2">Faça login para continuar</p>
         </div>
 
