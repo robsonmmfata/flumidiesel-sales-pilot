@@ -50,8 +50,8 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
       className={cn(
         'flex items-center p-2 rounded-md transition-all',
         isActive
-          ? 'bg-flumi-500 text-white'
-          : 'text-gray-700 hover:bg-flumi-100'
+          ? 'bg-white text-black'
+          : 'text-gray-300 hover:bg-gray-800'
       )}
       onClick={handleClick}
     >
@@ -74,7 +74,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   if (isLoading || !user) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-black">
         <Spinner size="lg" />
       </div>
     );
@@ -162,25 +162,25 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   ].filter((link) => link.roles.includes(user.role));
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-black">
       {/* Sidebar */}
       <div 
         className={cn(
-          "h-full bg-white shadow-lg transition-all duration-300 overflow-hidden",
+          "h-full bg-black border-r border-gray-800 shadow-lg transition-all duration-300 overflow-hidden",
           isSidebarCollapsed ? "w-16" : "w-64"
         )}
       >
-        <div className="flex justify-between items-center h-16 px-4 border-b">
+        <div className="flex justify-between items-center h-16 px-4 border-b border-gray-800">
           {!isSidebarCollapsed && (
-            <div className="font-bold text-xl text-flumi-700">
-              FlumidieselApp
+            <div className="font-bold text-xl text-white">
+              Flume Diesel
             </div>
           )}
           <Button 
             variant="ghost" 
             size="icon"
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="ml-auto text-gray-500"
+            className="ml-auto text-gray-300"
           >
             <Menu size={20} />
           </Button>
@@ -198,15 +198,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             />
           ))}
           
-          <div className="mt-auto pt-4 border-t">
+          <div className="mt-auto pt-4 border-t border-gray-800">
             <div className="flex items-center mb-4">
-              <div className="w-8 h-8 rounded-full bg-flumi-100 flex items-center justify-center text-flumi-700">
+              <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white">
                 <User size={18} />
               </div>
               {!isSidebarCollapsed && (
                 <div className="ml-2">
-                  <div className="text-sm font-semibold">{user.name}</div>
-                  <div className="text-xs text-gray-500">{user.role}</div>
+                  <div className="text-sm font-semibold text-white">{user.name}</div>
+                  <div className="text-xs text-gray-400">{user.role}</div>
                 </div>
               )}
             </div>
@@ -214,7 +214,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               variant="outline" 
               size={isSidebarCollapsed ? 'icon' : 'default'} 
               onClick={handleLogout}
-              className="w-full"
+              className="w-full border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
             >
               <LogOut size={18} />
               {!isSidebarCollapsed && <span className="ml-2">Sair</span>}
@@ -226,19 +226,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-16 bg-white border-b shadow-sm flex items-center px-4">
+        <header className="h-16 bg-black border-b border-gray-800 shadow-sm flex items-center px-4">
           <div className="flex-1">
             <div className="relative">
               <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="search"
                 placeholder="Buscar..."
-                className="pl-10 pr-4 py-2 border rounded-md w-64 focus:outline-none focus:ring-2 focus:ring-flumi-500 focus:border-transparent"
+                className="pl-10 pr-4 py-2 border rounded-md w-64 focus:outline-none focus:ring-2 focus:border-transparent bg-gray-900 border-gray-700 text-white"
               />
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative text-gray-300 hover:text-white">
               <Bell size={20} />
               <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
             </Button>
@@ -246,7 +246,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-auto p-6 bg-gray-50">{children}</main>
+        <main className="flex-1 overflow-auto p-6 bg-black">{children}</main>
       </div>
     </div>
   );
