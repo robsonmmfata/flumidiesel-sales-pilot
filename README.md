@@ -1,73 +1,56 @@
-# Welcome to your Lovable project
+# 🚀 Flumidiesel Sales Pilot
 
-## Project info
+Bem-vindo ao repositório do Flumidiesel Sales Pilot! Este projeto visa ser um sistema de gestão de vendas completo e eficiente para a Flumidiesel, otimizando o fluxo de trabalho de administradores, gerentes e vendedores.
 
-**URL**: https://lovable.dev/projects/50164e47-a3f4-445d-ab90-e145326fc999
+<br>
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 💻 Tecnologias Utilizadas
 
-**Use Lovable**
+Este projeto é construído com um stack moderno e robusto, garantindo performance e uma ótima experiência de desenvolvimento.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/50164e47-a3f4-445d-ab90-e145326fc999) and start prompting.
+<p align="center">
+  <a href="https://vitejs.dev/" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
+  </a>
+  <a href="https://www.typescriptlang.org/" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  </a>
+  <a href="https://react.dev/" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
+  </a>
+  <a href="https://ui.shadcn.com/" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcn%2Fui&logoColor=white" alt="shadcn/ui">
+  </a>
+  <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
+  </a>
+  <a href="https://nodejs.org/en" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
+  </a>
+  <a href="https://www.npmjs.com/" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white" alt="npm">
+  </a>
+</p>
 
-Changes made via Lovable will be committed automatically to this repo.
+<br>
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## ⚙️ Como Contribuir
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Quer ajudar a construir o Flumidiesel Sales Pilot? Ótimo! Siga os passos abaixo para configurar seu ambiente de desenvolvimento e começar a contribuir.
 
-Follow these steps:
+### 1. Clonar o Repositório
+
+Primeiro, você precisará fazer um **Fork** deste repositório para a sua conta do GitHub e depois clonar o **seu fork** para a sua máquina local.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Passo 1.1: Faça um Fork deste repositório no GitHub (botão 'Fork' no canto superior direito).
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Passo 1.2: Clone o SEU fork para sua máquina local.
+git clone [https://github.com/SEU_USUARIO/flumidiesel-sales-pilot.git](https://github.com/SEU_USUARIO/flumidiesel-sales-pilot.git)
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/50164e47-a3f4-445d-ab90-e145326fc999) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+# Passo 1.3: Navegue até o diretório do projeto.
+cd flumidiesel-sales-pilot
