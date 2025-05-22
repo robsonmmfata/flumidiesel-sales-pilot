@@ -1,18 +1,17 @@
-
 import React from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  LogOut, 
-  Menu, 
-  User, 
-  Users, 
-  Calendar, 
+import {
+  LogOut,
+  Menu,
+  User,
+  Users,
+  Calendar,
   ClipboardCheck,
   TrendingUp,
   Bell,
   Package,
-  Search,
+  Search, // 'Search' ainda é importado, mas não usado no header
   UserRound
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -39,7 +38,7 @@ interface DashboardLayoutProps {
 // Component to display each individual sidebar link
 const NavLink = ({ to, icon, label, isActive }: { to: string, icon: React.ReactNode, label: string, isActive: boolean }) => {
   const { isMobile, setOpenMobile } = useSidebar();
-  
+
   const handleClick = () => {
     // For mobile, automatically close the sidebar when an item is clicked
     if (isMobile) {
@@ -49,8 +48,8 @@ const NavLink = ({ to, icon, label, isActive }: { to: string, icon: React.ReactN
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton 
-        asChild 
+      <SidebarMenuButton
+        asChild
         isActive={isActive}
         tooltip={label}
       >
@@ -68,7 +67,7 @@ const AppSidebar = () => {
   const { user, logout, isAdmin, isManager } = useAuth();
   const location = useLocation();
   const pathname = location.pathname;
-  
+
   const handleLogout = () => {
     logout();
     toast.success("Sessão encerrada com sucesso");
@@ -78,83 +77,92 @@ const AppSidebar = () => {
 
   // Define links based on user role
   const sidebarLinks = [
-    { 
-      to: `${baseRoute}/dashboard`, 
-      icon: <TrendingUp size={20} />, 
-      label: 'Dashboard', 
+    {
+      to: `${baseRoute}/dashboard`,
+      icon: <TrendingUp size={20} />,
+      label: 'Dashboard',
       isActive: pathname === `${baseRoute}/dashboard`,
-      roles: ['admin', 'manager', 'salesperson'] 
+      roles: ['admin', 'manager', 'salesperson']
     },
-    { 
-      to: `${baseRoute}/users`, 
-      icon: <Users size={20} />, 
-      label: 'Usuários', 
+    {
+      to: `${baseRoute}/users`,
+      icon: <Users size={20} />,
+      label: 'Usuários',
       isActive: pathname === `${baseRoute}/users`,
-      roles: ['admin'] 
+      roles: ['admin']
     },
-    { 
-      to: `${baseRoute}/clients`, 
-      icon: <UserRound size={20} />, 
-      label: 'Clientes', 
+    {
+      to: `${baseRoute}/clients`,
+      icon: <UserRound size={20} />,
+      label: 'Clientes',
       isActive: pathname === `${baseRoute}/clients`,
-      roles: ['admin', 'manager', 'salesperson'] 
+      roles: ['admin', 'manager', 'salesperson']
     },
-    { 
-      to: `${baseRoute}/visits`, 
-      icon: <ClipboardCheck size={20} />, 
-      label: 'Visitas', 
+    {
+      to: `${baseRoute}/visits`,
+      icon: <ClipboardCheck size={20} />,
+      label: 'Visitas',
       isActive: pathname === `${baseRoute}/visits`,
-      roles: ['salesperson'] 
+      roles: ['salesperson']
     },
-    { 
-      to: `${baseRoute}/schedule`, 
-      icon: <Calendar size={20} />, 
-      label: 'Agenda', 
+    {
+      to: `${baseRoute}/schedule`,
+      icon: <Calendar size={20} />,
+      label: 'Agenda',
       isActive: pathname === `${baseRoute}/schedule`,
-      roles: ['salesperson'] 
+      roles: ['salesperson']
     },
-    { 
-      to: `${baseRoute}/prospects`, 
-      icon: <Users size={20} />, 
-      label: 'Prospecção', 
+    {
+      to: `${baseRoute}/prospects`,
+      icon: <Users size={20} />,
+      label: 'Prospecção',
       isActive: pathname === `${baseRoute}/prospects`,
-      roles: ['salesperson'] 
+      roles: ['salesperson']
     },
-    { 
-      to: `${baseRoute}/sales`, 
-      icon: <TrendingUp size={20} />, 
-      label: 'Vendas', 
+    {
+      to: `${baseRoute}/sales`,
+      icon: <TrendingUp size={20} />,
+      label: 'Vendas',
       isActive: pathname === `${baseRoute}/sales`,
-      roles: ['salesperson'] 
+      roles: ['salesperson']
     },
-    { 
-      to: `${baseRoute}/inventory`, 
-      icon: <Package size={20} />, 
-      label: 'Estoque', 
+    {
+      to: `${baseRoute}/inventory`,
+      icon: <Package size={20} />,
+      label: 'Estoque',
       isActive: pathname === `${baseRoute}/inventory`,
-      roles: ['admin', 'manager', 'salesperson'] 
+      roles: ['admin', 'manager', 'salesperson']
     },
-    { 
-      to: `${baseRoute}/promotions`, 
-      icon: <TrendingUp size={20} />, 
-      label: 'Promoções', 
+    {
+      to: `${baseRoute}/promotions`,
+      icon: <TrendingUp size={20} />,
+      label: 'Promoções',
       isActive: pathname === `${baseRoute}/promotions`,
-      roles: ['admin', 'manager', 'salesperson'] 
+      roles: ['admin', 'manager', 'salesperson']
     },
   ].filter((link) => link.roles.includes(user.role));
 
   return (
-    <Sidebar 
+    <Sidebar
       className="border-r border-gray-800 bg-black text-white"
     >
       <SidebarHeader className="border-b border-gray-800">
         <div className="p-4">
-          <div className="font-bold text-xl text-white">
-            Flumidiesel
-          </div>
+          {/* MUDANÇA AQUI: Adiciona a imagem e o texto */}
+          <Link to="/" className="flex items-center justify-center gap-2"> {/* Link para a home, se desejar */}
+            <img
+              src="/src/pages/favicon.ico" // Confirme o caminho da sua imagem na pasta public/
+ alt="Logo Flumidiesel"
+              // Ajuste essas classes para o tamanho da logo na sidebar.
+              // h-10 seria 40px de altura. w-auto mantém a proporção.
+              className="h-50 w-auto"
+            />
+            {/* Opcional: Mantenha o texto "Flumidiesel" se quiser a logo ao lado dele */}
+            
+          </Link>
         </div>
       </SidebarHeader>
-      
+
       <SidebarContent className="p-2">
         <SidebarMenu>
           {sidebarLinks.map((link) => (
@@ -168,7 +176,7 @@ const AppSidebar = () => {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      
+
       <SidebarFooter className="border-t border-gray-800 p-4">
         <div className="flex items-center mb-4">
           <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white">
@@ -179,8 +187,8 @@ const AppSidebar = () => {
             <div className="text-xs text-gray-400">{user.role}</div>
           </div>
         </div>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={handleLogout}
           className="w-full border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
         >
@@ -195,7 +203,7 @@ const AppSidebar = () => {
 // Main layout component
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, isLoading } = useAuth();
-  
+
   if (isLoading || !user) {
     return (
       <div className="flex h-screen items-center justify-center bg-black">
@@ -208,23 +216,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     <SidebarProvider defaultOpen={true}>
       <div className="flex h-screen bg-black w-full">
         <AppSidebar />
-        
+
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden bg-black">
           {/* Header */}
           <header className="h-16 bg-black border-b border-gray-800 shadow-sm flex items-center px-4">
             <SidebarTrigger className="text-gray-300 hover:text-white mr-4" />
-            <div className="flex-1">
-              <div className="relative">
-                <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="search"
-                  placeholder="Buscar..."
-                  className="pl-10 pr-4 py-2 border rounded-md w-64 focus:outline-none focus:ring-2 focus:border-transparent bg-gray-900 border-gray-700 text-white"
-                />
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
+            {/* O filtro de pesquisa foi removido daqui */}
+            {/* Opcional: Adicionar logo menor aqui se desejar */}
+            {/*
+            <Link to="/" className="flex items-center ml-4">
+              <img
+                src="/logo-flumidiesel.png" // Ajuste o caminho
+                alt="Logo Flumidiesel"
+                className="h-8 w-auto" // Menor para o cabeçalho
+              />
+            </Link>
+            */}
+            <div className="flex items-center space-x-4 ml-auto"> {/* Adicionado ml-auto para empurrar os ícones para a direita */}
               <Button variant="ghost" size="icon" className="relative text-gray-300 hover:text-white">
                 <Bell size={20} />
                 <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>

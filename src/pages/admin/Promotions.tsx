@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Search, TrendingUp, Calendar, Tag, Percent, Edit, Trash, Plus, Package } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // Corrigido '=>' para 'from'
 import { toast } from 'sonner';
 
 // Lista de produtos correspondente ao inventário atualizado
@@ -302,6 +301,7 @@ const AdminPromotionsPage = () => {
   const [selectedPromotion, setSelectedPromotion] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [showReport, setShowReport] = useState(false); // Novo estado para controlar a visibilidade do relatório
 
   // Filter promotions based on search term and status
   const filteredPromotions = mockPromotions.filter(promotion => {
@@ -381,6 +381,12 @@ const AdminPromotionsPage = () => {
     return `${selectedProducts[0].name}, ${selectedProducts[1].name} e mais ${selectedProducts.length - 2} produto(s)`;
   };
 
+  // Nova função para gerar o relatório
+  const handleGenerateReport = () => {
+    setShowReport(true); // Define o estado para mostrar o relatório
+    toast.success("Relatório de Promoções gerado com sucesso!");
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-4">
@@ -446,20 +452,21 @@ const AdminPromotionsPage = () => {
                       <p className="text-sm text-gray-600 mb-2">{promotion.description}</p>
                       <div className="flex flex-col gap-1 text-sm">
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4 text-gray-400" />
-                          <span>
+                          {/* ALTERAÇÃO AQUI: Mudando a cor do texto para branco para melhor visibilidade */}
+                          <Calendar className="h-4 w-4 text-white" />
+                          <span className="text-white"> {/* Adicionado text-white aqui */}
                             {formatDate(promotion.startDate)} - {formatDate(promotion.endDate)}
                           </span>
                         </div>
                         <div className="flex flex-wrap gap-1 mt-2">
                           {promotion.categories.map((category, index) => (
-                            <Badge key={index} variant="outline" className="bg-gray-100">
+                            <Badge key={index} variant="outline" className="bg-WHITE-100">
                               <Tag className="h-3 w-3 mr-1" /> {category}
                             </Badge>
                           ))}
                         </div>
                         <div className="mt-2">
-                          <p className="text-xs text-gray-500 line-clamp-1">
+                          <p className="text-xs text-gray-500 line-clamp-1"> {/* Linha a ser alterada */}
                             <Package className="h-3 w-3 inline mr-1" />
                             {getProductNamesByIds(promotion.productIds)}
                           </p>
@@ -510,7 +517,10 @@ const AdminPromotionsPage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {Math.round(mockPromotions.reduce((sum, promo) => sum + promo.discountPercentage, 0) / mockPromotions.length)}%
+                    {/* Correção do cálculo da Média de Desconto */}
+                    {mockPromotions.length > 0 
+                      ? `${Math.round(mockPromotions.reduce((sum, promo) => sum + promo.discountPercentage, 0) / mockPromotions.length)}%` 
+                      : '0%'}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Considerando todas as promoções
@@ -555,9 +565,53 @@ const AdminPromotionsPage = () => {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="outline" className="w-full">Gerar Relatório de Promoções</Button>
+                {/* Botão Gerar Relatório de Promoções */}
+                <Button variant="outline" className="w-full" onClick={handleGenerateReport}>
+                  Gerar Relatório de Promoções
+                </Button>
               </CardFooter>
             </Card>
+
+            {/* Seção do Relatório (renderizada condicionalmente) */}
+            {showReport && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Relatório Detalhado de Promoções</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left table-auto">
+                      <thead>
+                        <tr className="bg-gray-800 text-white">
+                          <th className="px-4 py-2">Nome</th>
+                          <th className="px-4 py-2">Desconto</th>
+                          <th className="px-4 py-2">Período</th>
+                          <th className="px-4 py-2">Categorias</th>
+                          <th className="px-4 py-2">Produtos Aplicáveis</th>
+                          <th className="px-4 py-2">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {mockPromotions.map((promo) => (
+                          <tr key={promo.id} className="border-b border-gray-700 hover:bg-gray-900">
+                            <td className="px-4 py-2">{promo.name}</td>
+                            <td className="px-4 py-2">{promo.discountPercentage}%</td>
+                            <td className="px-4 py-2">{formatDate(promo.startDate)} - {formatDate(promo.endDate)}</td>
+                            <td className="px-4 py-2">{promo.categories.join(', ')}</td>
+                            <td className="px-4 py-2 text-xs">{getProductNamesByIds(promo.productIds)}</td>
+                            <td className="px-4 py-2">
+                              <Badge className={promo.active ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
+                                {promo.active ? "Ativa" : "Inativa"}
+                              </Badge>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>
@@ -662,7 +716,8 @@ const AdminPromotionsPage = () => {
                         />
                         <label htmlFor={`product-${product.id}`} className="flex-1 text-sm">
                           <div>{product.name}</div>
-                          <div className="text-xs text-gray-500">{product.sku} | R$ {product.price.toFixed(2)}</div>
+                          {/* ALTERAÇÃO AQUI: Mudando a cor do texto para branco para melhor visibilidade */}
+                          <div className="text-xs text-white">{product.sku} | R$ {product.price.toFixed(2)}</div>
                         </label>
                       </div>
                     ))

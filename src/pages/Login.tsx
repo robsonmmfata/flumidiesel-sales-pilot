@@ -1,9 +1,13 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+
+// 1. IMPORTE A SUA IMAGEM DE LOGO AQUI
+// O caminho abaixo é um exemplo. Ajuste conforme onde você salvou sua logo.
+import logoFlumidiesel from '../pages/favicon.ico'; // Caminho de exemplo, ajuste o seu!
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -30,7 +34,18 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="bg-black border border-gray-800 p-8 rounded-lg shadow-md w-96">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-white">Flumidiesel</h1>
+
+          {/* AQUI ESTÁ A MUDANÇA: MANTEMOS O H1 E ADICIONAMOS A IMAGEM DENTRO DELE */}
+          <h1 className="text-3xl font-bold text-white flex items-center justify-center gap-2"> {/* Adicione 'flex items-center justify-center gap-2' aqui */}
+            {/* Adicione a imagem aqui. Ajuste 'w-8 h-8' e 'mr-2' conforme necessário para o tamanho e espaçamento. */}
+            <img
+              src={logoFlumidiesel}
+              alt="Logo Flumidiesel"
+              className="w-50 h-50" // Exemplo de classes Tailwind para tamanho (8 = 32px). AJUSTE ISSO!
+            />
+    
+          </h1>
+
           <p className="text-gray-400 mt-2">Faça login para continuar</p>
         </div>
 

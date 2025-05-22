@@ -339,7 +339,7 @@ const SalespersonInventoryPage = () => {
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => (
               <Card key={item.id} className="overflow-hidden h-full">
-                <CardHeader className="p-3 pb-2 bg-gray-50">
+                <CardHeader className="p-3 pb-2 bg-white-50">
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-sm sm:text-base md:text-lg">{item.name}</CardTitle>
                     {getStockLevelBadge(item.stock, item.minimumStock)}
@@ -350,7 +350,7 @@ const SalespersonInventoryPage = () => {
                   <div className="text-xs sm:text-sm">{item.description}</div>
                   
                   <div className="flex justify-between items-center pt-2">
-                    <Badge variant="outline" className="bg-gray-100 text-xs">
+                    <Badge variant="outline" className="bg-white-100 text-xs">
                       <Tag className="h-3 w-3 mr-1" /> {item.category}
                     </Badge>
                     <p className="font-medium text-sm md:text-lg">{formatCurrency(item.price)}</p>

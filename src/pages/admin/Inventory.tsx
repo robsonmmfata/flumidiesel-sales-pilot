@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'; // Importar CardFooter
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Search, TrendingUp, Calendar, Tag, Percent, Edit, Trash, Plus, Package } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import InventoryTable from '@/components/inventory/InventoryTable';
 import InventoryAnalytics from '@/components/inventory/InventoryAnalytics';
@@ -287,6 +292,17 @@ const AdminInventoryPage = () => {
     setSelectedItem(null);
   };
 
+  // Estado para controlar a visibilidade da tabela de relatório
+  const [showReportTable, setShowReportTable] = useState(false);
+
+  // Nova função para gerar o relatório
+  const handleGenerateReport = () => {
+    // Lógica para gerar o relatório (por exemplo, coletar dados, formatar, etc.)
+    // Por enquanto, apenas um toast de sucesso e mostra a tabela de relatório
+    toast.success("Relatório de Estoque gerado com sucesso!");
+    setShowReportTable(true); // Define o estado para mostrar o relatório
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-4">
@@ -324,6 +340,53 @@ const AdminInventoryPage = () => {
               inventoryData={inventoryData}
               formatCurrency={formatCurrency}
             />
+            {/* Botão Gerar Relatório de Estoque */}
+            <Card>
+              <CardFooter>
+                <Button variant="outline" className="w-full" onClick={handleGenerateReport}>
+                  Gerar Relatório de Estoque
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Seção do Relatório de Estoque (renderizada condicionalmente) */}
+            {showReportTable && (
+              <Card className="mt-4"> {/* Adicionado mt-4 para espaçamento */}
+                <CardHeader>
+                  <CardTitle>Relatório Detalhado de Estoque</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left table-auto">
+                      <thead>
+                        <tr className="bg-gray-800 text-white">
+                          <th className="px-4 py-2">ID</th>
+                          <th className="px-4 py-2">Nome</th>
+                          <th className="px-4 py-2">Categoria</th>
+                          <th className="px-4 py-2">SKU</th>
+                          <th className="px-4 py-2">Estoque</th>
+                          <th className="px-4 py-2">Estoque Mínimo</th>
+                          <th className="px-4 py-2">Preço</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {inventoryData.map((item) => (
+                          <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-900">
+                            <td className="px-4 py-2">{item.id}</td>
+                            <td className="px-4 py-2">{item.name}</td>
+                            <td className="px-4 py-2">{item.category}</td>
+                            <td className="px-4 py-2">{item.sku}</td>
+                            <td className="px-4 py-2">{item.stock}</td>
+                            <td className="px-4 py-2">{item.minimumStock}</td>
+                            <td className="px-4 py-2">{formatCurrency(item.price)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>

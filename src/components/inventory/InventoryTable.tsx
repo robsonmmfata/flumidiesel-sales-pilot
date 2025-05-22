@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Search, Tag, Edit, Trash, ArrowUpDown, AlertCircle, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -178,7 +177,8 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
                       </div>
                     </td>
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                      <Badge variant="outline" className="bg-gray-100">
+                      {/* ALTERAÇÃO AQUI: Mudando a cor de fundo e texto da Badge da categoria */}
+                      <Badge variant="outline" className="bg-blue-500 text-white hover:bg-blue-600">
                         <Tag className="h-3 w-3 mr-1" /> {item.category}
                       </Badge>
                     </td>

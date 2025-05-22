@@ -386,7 +386,7 @@ const SalespersonPromotionsPage = () => {
                       {isActive ? (
                         <Badge className="bg-green-500 hover:bg-green-600">Ativa</Badge>
                       ) : (
-                        <Badge variant="outline" className="bg-gray-200">Inativa</Badge>
+                        <Badge variant="outline" className="bg--200">Inativa</Badge>
                       )}
                     </div>
                   </CardHeader>
@@ -415,17 +415,17 @@ const SalespersonPromotionsPage = () => {
                         {promo.productIds.length > 3 ? (
                           <>
                             {getProductNamesByIds(promo.productIds.slice(0, 2)).map((name, index) => (
-                              <Badge key={index} variant="outline" className="bg-gray-50">
+                              <Badge key={index} variant="outline" className="bg-white-50">
                                 <Package className="h-3 w-3 mr-1" /> {name.length > 30 ? name.substring(0, 30) + '...' : name}
                               </Badge>
                             ))}
-                            <Badge variant="outline" className="bg-gray-50">
+                            <Badge variant="outline" className="bg-white-50">
                               <Tag className="h-3 w-3 mr-1" /> + {promo.productIds.length - 2} produtos
                             </Badge>
                           </>
                         ) : (
                           getProductNamesByIds(promo.productIds).map((name, index) => (
-                            <Badge key={index} variant="outline" className="bg-gray-50">
+                            <Badge key={index} variant="outline" className="bg-white-50">
                               <Package className="h-3 w-3 mr-1" /> {name.length > 40 ? name.substring(0, 40) + '...' : name}
                             </Badge>
                           ))

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -95,9 +94,7 @@ const InventoryAnalytics: React.FC<InventoryAnalyticsProps> = ({
             <p className="text-muted-foreground text-sm">Não há itens com estoque crítico</p>
           )}
         </CardContent>
-        <CardFooter>
-          <Button variant="outline" className="w-full">Gerar Relatório de Estoque</Button>
-        </CardFooter>
+        {/* CardFooter com o botão "Gerar Relatório de Estoque" removido daqui */}
       </Card>
     </div>
   );

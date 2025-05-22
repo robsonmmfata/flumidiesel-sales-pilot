@@ -1,0 +1,252 @@
+Tabela: Users (Usuários)
+id: string (PK)
+name: string
+email: string
+role: string (admin, manager, salesperson)
+region: string (opcional)
+cpfCnpj: string (opcional)
+phone: string
+active: boolean
+Tabela: Clients (Clientes)
+id: string (PK)
+name: string
+email: string
+address: string
+complement: string (opcional)
+neighborhood: string
+city: string
+state: string
+number: string (opcional)
+phone: string
+cellphone: string (opcional)
+zipCode: string
+contactName: string (opcional)
+status: enum ('active', 'inactive')
+lastPurchase: datetime (opcional)
+totalPurchases: int (opcional)
+totalSpent: float (opcional)
+Tabela: Visits (Visitas)
+id: string (PK)
+date: datetime
+clientName: string
+address: string
+city: string
+contactName: string
+contactInfo: string
+arrivalTime: time
+departureTime: time
+subject: string
+interestLevel: enum ('low', 'medium', 'high')
+productsPresented: array of strings
+salesPersonId: string (FK para Users)
+location: { latitude: float, longitude: float } (opcional)
+result: enum ('success', 'pending', 'failure') (opcional)
+Tabela: Prospects (Prospectos)
+id: string (PK)
+clientName: string
+name: string (opcional)
+company: string (opcional)
+city: string (opcional)
+clientType: enum ('company', 'fleet', 'autonomous', 'other')
+contactName: string
+contactInfo: string
+interestLevel: enum ('low', 'medium', 'high')
+requestedQuote: boolean
+requestedFollowUp: boolean
+notes: text
+salesPersonId: string (FK para Users)
+salespersonName: string (opcional)
+createdAt: datetime
+Tabela: Sales (Vendas)
+id: string (PK)
+clientName: string
+products: array of { productId: string, name: string, quantity: int, unitPrice: float }
+totalValue: float
+paymentMethod: enum ('cash', 'credit', 'debit', 'transfer', 'invoice')
+deliveryDate: datetime
+date: datetime
+orderNumber: string
+salesPersonId: string (FK para Users)
+salesPersonName: string (opcional)
+status: enum ('completed', 'pending', 'cancelled') (opcional)
+createdAt: datetime
+Tabela: ScheduledVisits (Visitas Agendadas)
+id: string (PK)
+clientName: string
+contactName: string
+contactInfo: string
+address: string
+city: string
+date: datetime
+time: time
+purpose: string
+salesPersonId: string (FK para Users)
+createdAt: datetime
+completed: boolean
+Tabela: InventoryItems (Itens de Inventário)
+id: string (PK)
+name: string
+category: string
+description: text
+sku: string
+price: float
+stock: int
+minimumStock: int
+unit: string
+createdAt: datetime
+updatedAt: datetime
+Tabela: Promotions (Promoções)
+id: string (PK)
+title: string
+description: text
+discount: int (percentual)
+applicableProducts: array de product ids (string)
+startDate: datetime
+endDate: datetime
+createdBy: string (FK para Users)
+createdAt: datetime
+Tabela: Notifications (Notificações)
+id: string (PK)
+title: string
+message: text
+type: enum ('reminder', 'alert', 'achievement', 'promotion')
+read: boolean
+userId: string (FK para Users)
+createdAt: datetime
+
+________________________codigo inserir sql abaixo___________________________________
+
+CREATE TABLE users (
+  id VARCHAR PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  email VARCHAR NOT NULL UNIQUE,
+  role VARCHAR NOT NULL,
+  region VARCHAR,
+  cpf_cnpj VARCHAR,
+  phone VARCHAR,
+  active BOOLEAN NOT NULL
+);
+
+CREATE TABLE clients (
+  id VARCHAR PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  email VARCHAR NOT NULL,
+  address VARCHAR NOT NULL,
+  complement VARCHAR,
+  neighborhood VARCHAR NOT NULL,
+  city VARCHAR NOT NULL,
+  state VARCHAR NOT NULL,
+  number VARCHAR,
+  phone VARCHAR NOT NULL,
+  cellphone VARCHAR,
+  zip_code VARCHAR NOT NULL,
+  contact_name VARCHAR,
+  status VARCHAR CHECK (status IN ('active', 'inactive')) NOT NULL,
+  last_purchase TIMESTAMP,
+  total_purchases INTEGER,
+  total_spent NUMERIC(12,2)
+);
+
+CREATE TABLE visits (
+  id VARCHAR PRIMARY KEY,
+  date TIMESTAMP NOT NULL,
+  client_name VARCHAR NOT NULL,
+  address VARCHAR NOT NULL,
+  city VARCHAR NOT NULL,
+  contact_name VARCHAR NOT NULL,
+  contact_info VARCHAR NOT NULL,
+  arrival_time TIME NOT NULL,
+  departure_time TIME NOT NULL,
+  subject TEXT NOT NULL,
+  interest_level VARCHAR CHECK (interest_level IN ('low', 'medium', 'high')) NOT NULL,
+  products_presented TEXT[],
+  sales_person_id VARCHAR REFERENCES users(id),
+  latitude NUMERIC,
+  longitude NUMERIC,
+  result VARCHAR CHECK (result IN ('success', 'pending', 'failure'))
+);
+
+CREATE TABLE prospects (
+  id VARCHAR PRIMARY KEY,
+  client_name VARCHAR NOT NULL,
+  name VARCHAR,
+  company VARCHAR,
+  city VARCHAR,
+  client_type VARCHAR CHECK (client_type IN ('company', 'fleet', 'autonomous', 'other')) NOT NULL,
+  contact_name VARCHAR NOT NULL,
+  contact_info VARCHAR NOT NULL,
+  interest_level VARCHAR CHECK (interest_level IN ('low', 'medium', 'high')) NOT NULL,
+  requested_quote BOOLEAN NOT NULL,
+  requested_follow_up BOOLEAN NOT NULL,
+  notes TEXT,
+  sales_person_id VARCHAR REFERENCES users(id),
+  salesperson_name VARCHAR,
+  created_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE sales (
+  id VARCHAR PRIMARY KEY,
+  client_name VARCHAR NOT NULL,
+  products JSONB NOT NULL,
+  total_value NUMERIC(12,2) NOT NULL,
+  payment_method VARCHAR CHECK (payment_method IN ('cash', 'credit', 'debit', 'transfer', 'invoice')) NOT NULL,
+  delivery_date TIMESTAMP NOT NULL,
+  date TIMESTAMP NOT NULL,
+  order_number VARCHAR NOT NULL,
+  sales_person_id VARCHAR REFERENCES users(id),
+  sales_person_name VARCHAR,
+  status VARCHAR CHECK (status IN ('completed', 'pending', 'cancelled')),
+  created_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE scheduled_visits (
+  id VARCHAR PRIMARY KEY,
+  client_name VARCHAR NOT NULL,
+  contact_name VARCHAR NOT NULL,
+  contact_info VARCHAR NOT NULL,
+  address VARCHAR NOT NULL,
+  city VARCHAR NOT NULL,
+  date TIMESTAMP NOT NULL,
+  time TIME NOT NULL,
+  purpose TEXT NOT NULL,
+  sales_person_id VARCHAR REFERENCES users(id),
+  created_at TIMESTAMP NOT NULL,
+  completed BOOLEAN NOT NULL
+);
+
+CREATE TABLE inventory_items (
+  id VARCHAR PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  category VARCHAR NOT NULL,
+  description TEXT NOT NULL,
+  sku VARCHAR NOT NULL,
+  price NUMERIC(12,2) NOT NULL,
+  stock INTEGER NOT NULL,
+  minimum_stock INTEGER NOT NULL,
+  unit VARCHAR NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE promotions (
+  id VARCHAR PRIMARY KEY,
+  title VARCHAR NOT NULL,
+  description TEXT NOT NULL,
+  discount INTEGER NOT NULL,
+  applicable_products VARCHAR[] NOT NULL,
+  start_date TIMESTAMP NOT NULL,
+  end_date TIMESTAMP NOT NULL,
+  created_by VARCHAR REFERENCES users(id),
+  created_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE notifications (
+  id VARCHAR PRIMARY KEY,
+  title VARCHAR NOT NULL,
+  message TEXT NOT NULL,
+  type VARCHAR CHECK (type IN ('reminder', 'alert', 'achievement', 'promotion')) NOT NULL,
+  read BOOLEAN NOT NULL,
+  user_id VARCHAR REFERENCES users(id),
+  created_at TIMESTAMP NOT NULL
+);
+
